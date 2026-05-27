@@ -3400,7 +3400,14 @@ void CTFPlayer::ItemPostFrame()
 void CTFPlayer::HandleGrenades()
 {
 	// Cyanide; Avoid having to check if it's the invis watch (or potentially something else)
-	CTFWeaponBaseGrenade *pOffHandGrenade = dynamic_cast<CTFWeaponBaseGrenade *>(m_hOffHandWeapon.Get());
+	const TFPlayerClassData_t *pData = m_PlayerClass.GetData();
+	CTFWeaponBaseGrenade *pGrenade0 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[0] ) );
+	CTFWeaponBaseGrenade *pGrenade1 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[1] ) );
+	CTFWeaponBaseGrenade *pOffHandGrenade = nullptr;
+	if ( pGrenade0 && pGrenade0->IsPrimed() )
+		pOffHandGrenade = pGrenade0;
+	else if ( pGrenade1 && pGrenade1->IsPrimed() )
+		pOffHandGrenade = pGrenade1;
 
 	if( !GetPrimedState() && !pOffHandGrenade )
 	{
@@ -3427,7 +3434,7 @@ void CTFPlayer::HandleGrenades()
 
 			// if we pressed a grenade button we can assume it's one or the other
 			int iGrenade = m_afButtonPressed & IN_GRENADE1 ? 0 : 1;
-			TFPlayerClassData_t *pData = m_PlayerClass.GetData();
+			
 			CTFWeaponBaseGrenade *pGrenade = (CTFWeaponBaseGrenade *)Weapon_OwnsThisID( pData->m_aGrenades[iGrenade] );
 			if( pGrenade && pGrenade->HasAmmo() )
 			{
@@ -3455,10 +3462,8 @@ void CTFPlayer::HandleGrenades()
 				if( prediction && !prediction->IsFirstTimePredicted() )
 					return;
 #endif
-				pGrenade->SetWeaponVisible( false );
 				pGrenade->Prime();
 				SetPrimedState( PRIME_STATE_PRE_DEPLOY );
-				m_hOffHandWeapon = pGrenade;
 				return;
 			}
 			break;
@@ -3478,11 +3483,7 @@ void CTFPlayer::HandleGrenades()
 		{
 			if( pf_grenades_holstering.GetBool() )
 			{
-				m_hOffHandWeapon->SetWeaponVisible( true );
-				CBaseViewModel *vm = GetViewModel( TF_VM_OFFHAND );
-				if( vm )
-					vm->RemoveEffects( EF_NODRAW );
-				m_hOffHandWeapon->Deploy();
+				SetOffHandWeapon( pOffHandGrenade );
 			}
 			SetPrimedState( PRIME_STATE_DEPLOYED );
 			return;
@@ -3506,11 +3507,10 @@ void CTFPlayer::FinishThrowGrenade(void)
 
 	MSG_NOTIFY_ON_HIT;
 
-	m_hOffHandWeapon->SetWeaponVisible( false );
-	m_hOffHandWeapon = NULL;
+	HolsterOffHandWeapon();
 	CBaseViewModel *vm = GetViewModel( TF_VM_OFFHAND );
 	if( vm )
-		vm->AddEffects( EF_NODRAW );
+		vm->SetWeaponModel(NULL, NULL);
 
 	if( pf_grenades_holstering.GetBool() && GetActiveTFWeapon() )
 	{
@@ -3539,7 +3539,7 @@ void CTFPlayer::HolsterOffHandWeapon( void )
 		m_hOffHandWeapon->Holster();
 	}
 #ifdef PF2
-	m_hOffHandWeapon = NULL;
+	m_hOffHandWeapon.Set(nullptr);
 #endif
 }
 

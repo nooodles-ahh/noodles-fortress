@@ -318,9 +318,6 @@ void CTFWeaponBaseGrenade::Throw()
 	if ( bExplodingInHand || bExplodingOnDeath )
 	{
 		SetWeaponVisible( false );
-		CBaseViewModel *vm = pPlayer->GetViewModel( TF_VM_OFFHAND );
-		if( vm )
-			vm->AddEffects( EF_NODRAW );
 	}
 #endif
 
@@ -392,7 +389,11 @@ void CTFWeaponBaseGrenade::ItemPostFrame()
 		// tell our player that we're all done with the grenade throw.
 		if( IsEffectActive( EF_NODRAW ) )
 		{
+#ifdef GAME_DLL
 			pPlayer->FinishThrowGrenade();
+#else
+			pPlayer->SetPrimedState( PRIME_STATE_NONE );
+#endif
 			return;
 		}
 
