@@ -19,7 +19,7 @@ My intention with this is to finish everything I wanted to finish, plus anything
 - ~Restore scout double jump~ - DONE
 - Recompile full lambert skin shader for current SDK
 - Port various leaked maps
-- Fix grenade viewmodel animation jittering
+- ~Fix grenade viewmodel animation jittering~ - DONE as much as I care to for now. Reasonably happy with how it is now
 - Make spawn room turret not a building object
   - No reason for this other than some animation bug I didn't fix at the time
 - Flag throw only on death
