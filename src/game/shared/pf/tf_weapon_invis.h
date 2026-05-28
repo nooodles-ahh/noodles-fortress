@@ -47,7 +47,7 @@ public:
 
 	virtual bool	ShouldShowControlPanels( void )					{ return true; }
 
-	virtual void	SetWeaponVisible( bool visible );
+	//virtual void	SetWeaponVisible( bool visible );
 
 	virtual void	ItemBusyFrame( void );
 

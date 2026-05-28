@@ -3403,13 +3403,13 @@ void CTFPlayer::HandleGrenades()
 	const TFPlayerClassData_t *pData = m_PlayerClass.GetData();
 	CTFWeaponBaseGrenade *pGrenade0 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[0] ) );
 	CTFWeaponBaseGrenade *pGrenade1 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[1] ) );
-	CTFWeaponBaseGrenade *pOffHandGrenade = nullptr;
+	CTFWeaponBaseGrenade *pPrimedGrenade = nullptr;
 	if ( pGrenade0 && pGrenade0->IsPrimed() )
-		pOffHandGrenade = pGrenade0;
+		pPrimedGrenade = pGrenade0;
 	else if ( pGrenade1 && pGrenade1->IsPrimed() )
-		pOffHandGrenade = pGrenade1;
+		pPrimedGrenade = pGrenade1;
 
-	if( !GetPrimedState() && !pOffHandGrenade )
+	if( !GetPrimedState() && !pPrimedGrenade )
 	{
 		// are we pressing a grenade button?
 		if( !(m_afButtonPressed & (IN_GRENADE1 | IN_GRENADE2)) )
@@ -3477,14 +3477,15 @@ void CTFPlayer::HandleGrenades()
 		}
 #endif
 	}
-	else if( GetPrimedState() == PRIME_STATE_PRE_DEPLOY && pOffHandGrenade )
+	else if( GetPrimedState() == PRIME_STATE_PRE_DEPLOY && pPrimedGrenade )
 	{
 		if( GetActiveTFWeapon()->HasWeaponIdleTimeElapsed() )
 		{
 			if( pf_grenades_holstering.GetBool() )
 			{
-				SetOffHandWeapon( pOffHandGrenade );
+				SetOffHandWeapon( pPrimedGrenade );
 			}
+			SetNextAttack( gpGlobals->curtime + 0.8f );
 			SetPrimedState( PRIME_STATE_DEPLOYED );
 			return;
 		}

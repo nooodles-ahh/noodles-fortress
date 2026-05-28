@@ -17,6 +17,7 @@
 // Client specific.
 #ifdef CLIENT_DLL
 #include "c_tf_player.h"
+#include "prediction.h"
 // Server specific.
 #else
 #include "tf_player.h"
@@ -47,12 +48,10 @@ BEGIN_NETWORK_TABLE( CTFWeaponBaseGrenade, DT_TFWeaponBaseGrenade )
 #ifdef CLIENT_DLL
 	RecvPropBool( RECVINFO( m_bPrimed ) ),
 	RecvPropFloat( RECVINFO( m_flThrowTime ) ),
-	RecvPropBool( RECVINFO( m_bThrow ) ),
 // Server specific.
 #else
 	SendPropBool( SENDINFO( m_bPrimed ) ),
 	SendPropTime( SENDINFO( m_flThrowTime ) ),
-	SendPropBool( SENDINFO( m_bThrow ) ),
 #endif
 END_NETWORK_TABLE()
 
@@ -60,7 +59,6 @@ BEGIN_PREDICTION_DATA( CTFWeaponBaseGrenade )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_bPrimed, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_flThrowTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD( m_bThrow, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
 
@@ -115,7 +113,7 @@ bool CTFWeaponBaseGrenade::IsPrimed( void )
 void CTFWeaponBaseGrenade::WeaponReset()
 {
 	m_bPrimed = false;
-	m_bThrow = false;
+	m_bThrown = false;
 	BaseClass::WeaponReset();
 }
 
@@ -124,9 +122,13 @@ void CTFWeaponBaseGrenade::WeaponReset()
 //-----------------------------------------------------------------------------
 void CTFWeaponBaseGrenade::Prime() 
 {
+#if defined( CLIENT_DLL )
+	if ( prediction && !prediction->IsFirstTimePredicted() )
+		return;
+#endif
+
 	CTFWeaponInfo weaponInfo = GetTFWpnData();
 	m_flThrowTime = gpGlobals->curtime + weaponInfo.m_flPrimerTime;
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.8f;
 
 #ifndef CLIENT_DLL
 	// Don't want the smokebomb to beep
@@ -157,6 +159,7 @@ void CTFWeaponBaseGrenade::Prime()
 #endif
 
 	m_bPrimed = true;
+	m_bThrown = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -168,7 +171,7 @@ void CTFWeaponBaseGrenade::Throw()
 		return;
 
 	m_bPrimed = false;
-	m_bThrow = false;
+	m_bThrown = true;
 
 	// Get the owning player.
 	CTFPlayer *pPlayer = ToTFPlayer( GetOwner() );
@@ -342,6 +345,7 @@ void CTFWeaponBaseGrenade::ItemPostFrame()
 	if( !pPlayer )
 		return;
 
+	bool bThrow = false;
 	if( m_bPrimed )
 	{
 		// Is our timer up? If so, blow up immediately
@@ -354,7 +358,6 @@ void CTFWeaponBaseGrenade::ItemPostFrame()
 		if( m_flNextPrimaryAttack > gpGlobals->curtime )
 			return;
 
-		bool bThrow = false;
 		if( pPlayer->GetGrenadePressThrow() )
 		{
 			if( (pPlayer->m_afButtonPressed & IN_GRENADE1 || pPlayer->m_afButtonPressed & IN_GRENADE2) )
@@ -365,53 +368,51 @@ void CTFWeaponBaseGrenade::ItemPostFrame()
 			if( !(pPlayer->m_nButtons & IN_GRENADE1 || pPlayer->m_nButtons & IN_GRENADE2) )
 				bThrow = true;
 		}
-
-		if( !m_bThrow && bThrow )
-		{
-			m_bThrow = true;
-		}
 	}
 
-	if( m_bThrow )
+	if( bThrow && m_flNextPrimaryAttack <= gpGlobals->curtime )
 	{
 		// Start throwing
 		pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_GRENADE );
 		SendWeaponAnim( ACT_VM_PRIMARYATTACK );
-		//PoseParameterOverride( true );
 
+		//PoseParameterOverride( true );
 		Throw();
+
+		m_flTimeWeaponIdle = m_flNextPrimaryAttack = gpGlobals->curtime+GetViewModelSequenceDuration();
 		return;
 	}
 	
-	if( !m_bPrimed && !m_bThrow )
+	if( !m_bPrimed && m_bThrown )
 	{
 		// Once we've finished being holstered, we'll be hidden. When that happens,
 		// tell our player that we're all done with the grenade throw.
 		if( IsEffectActive( EF_NODRAW ) )
 		{
-#ifdef GAME_DLL
 			pPlayer->FinishThrowGrenade();
-#else
-			pPlayer->SetPrimedState( PRIME_STATE_NONE );
-#endif
 			return;
 		}
 
-		// We've been thrown. Go away.
-		if( HasWeaponIdleTimeElapsed() )
+		if ( HasWeaponIdleTimeElapsed() )
 		{
+#if defined( CLIENT_DLL )
+			if ( prediction && !prediction->IsFirstTimePredicted() )
+				return;
+#endif
+
+#ifdef GAME_DLL
 			Holster();
-			// Cyanide; just incase
-			SetWeaponVisible( false );
+#endif
 		}
 		return;
 	}
 
 	// Go straight to idle anim when deploy is done
-	if( m_flTimeWeaponIdle <= gpGlobals->curtime )
+	if ( m_flTimeWeaponIdle <= gpGlobals->curtime )
 	{
 		SendWeaponAnim( ACT_VM_IDLE );
 	}
+	
 }
 
 bool CTFWeaponBaseGrenade::ShouldLowerMainWeapon( void )

@@ -54,12 +54,20 @@ void CTFWeaponInvis::Spawn( void )
 void CTFWeaponInvis::HideThink( void )
 { 
 	SetWeaponVisible( false );
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	if ( pOwner )
+	{
+		CBaseViewModel* vm = pOwner->GetViewModel( m_nViewModelIndex );
+		if ( vm )
+			vm->SetWeaponModel( NULL, NULL );
+	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Show/hide weapon and corresponding view model if any
 // Input  : visible - 
 //-----------------------------------------------------------------------------
+#if 0
 void CTFWeaponInvis::SetWeaponVisible( bool visible )
 {
 	CBaseViewModel *vm = NULL;
@@ -87,6 +95,7 @@ void CTFWeaponInvis::SetWeaponVisible( bool visible )
 		}
 	}
 }
+#endif
 
 bool CTFWeaponInvis::Deploy( void )
 {
