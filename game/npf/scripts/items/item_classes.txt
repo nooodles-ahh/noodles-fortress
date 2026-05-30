@@ -676,6 +676,7 @@
 		"max_ilevel"		"1"
 		"model_inventory"	"models/weapons/w_models/w_grenade_beartrap.mdl"
 		"model_player"		"models/weapons/w_models/w_grenade_beartrap.mdl"
+		"attach_to_hands"	"1"
 		"min_viewmodel_offset"					"10 0 -10"
 		"used_by_classes"
 		{
@@ -713,6 +714,7 @@
 		"max_ilevel"		"1"
 		"model_inventory"	"models/weapons/w_models/w_grenade_mirv.mdl"
 		"model_player"		"models/weapons/w_models/w_grenade_mirv.mdl"
+		"attach_to_hands"	"1"
 		"min_viewmodel_offset"					"10 0 -10"
 		"used_by_classes"
 		{
