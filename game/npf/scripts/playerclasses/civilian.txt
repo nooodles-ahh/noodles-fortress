@@ -1,0 +1,47 @@
+//
+// Team Fortress - Civilian Player Class
+//
+PlayerClass
+{
+	// Attributes.
+	"name"			"civilian"
+	"model"			"models/player/civilian.mdl"
+	"model_hands"	"models/weapons/c_models/c_medic_arms.mdl"
+	"localize_name"		"TF_Class_Name_Civilian"
+	"speed_max"		"240"
+	"health_max"		"125"
+	"armor_max"		"0"
+	"armortype"		"0"
+
+	// Grenades.
+
+	// Weapons.
+	"weapon1"		"TF_WEAPON_UMBRELLA"
+	"weapon2"		""
+	"weapon3"		""
+
+	//Thirdperson
+	"cameraoffset_forward"	"85"
+	"cameraoffset_right"	"25"
+	"cameraoffset_up"	"0"
+	
+	"melee"
+	{
+		"TF_WEAPON_UMBRELLA"	"1"
+	}
+	
+	AmmoMax
+	{
+		"tf_ammo_primary"		"0"
+		"tf_ammo_secondary"	"0"
+		"tf_ammo_metal"		"0"
+		"tf_ammo_grenades1"	"0"
+		"tf_ammo_grenades2"	"0"
+	}	
+
+	// Death Sounds
+	"sound_death"				"Player.Death"
+	"sound_crit_death"				"TFPlayer.CritDeath"
+	"sound_melee_death"			"Player.MeleeDeath"
+	"sound_explosion_death"			"Player.ExplosionDeath"		
+}

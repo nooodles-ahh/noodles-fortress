@@ -1,0 +1,68 @@
+//
+// Team Fortress - Spy Player Class
+//
+PlayerClass
+{
+	// Attributes.
+	"name"			"spy"
+	"model"			"models/player/spy.mdl"
+	"model_hwm"		"models/player/hwm/spy.mdl"
+	"model_hands"	"models/weapons/c_models/c_spy_arms.mdl"
+	"localize_name"	"TF_Class_Name_Spy"
+	"speed_max"		"320"
+	"flag_speed_max"	"240"
+	"armor_max"		"50"
+	"armortype"		"1"
+	"health_max"		"90"
+
+	// Grenades.
+	"grenade1"		"TF_WEAPON_GRENADE_NORMAL"
+	"grenade2"		"TF_WEAPON_GRENADE_GAS"
+
+	// Weapons.
+	"weapon1"		"TF_WEAPON_KNIFE"
+	"weapon2"		"TF_WEAPON_REVOLVER"
+	"weapon3"		"TF_WEAPON_TRANQ"
+	"weapon4"		"TF_WEAPON_PDA_SPY"
+	"weapon5"		"TF_WEAPON_INVIS"
+	
+	// Buildables
+	"buildable1"	"OBJ_ATTACHMENT_SAPPER"	
+	
+	"primary"
+	{
+		"TF_WEAPON_REVOLVER"	"1"
+		"TF_WEAPON_PISTOL_SPY"	"1"
+	}
+	"secondary"
+	{
+		"TF_WEAPON_TRANQ"	"1"
+	}
+	"melee"
+	{
+		"TF_WEAPON_KNIFE"	"1"
+	}
+	"pda1"
+	{
+		"TF_WEAPON_PDA_SPY"	"1"
+	}
+	"pda2"
+	{
+		"TF_WEAPON_INVIS"	"1"
+	}
+
+	AmmoMax
+	{
+		"tf_ammo_primary"	"24"		
+		"tf_ammo_secondary"	"20"
+		"tf_ammo_metal"		"100"
+		"tf_ammo_grenades1"	"2"
+		"tf_ammo_grenades2"	"2"
+	}
+
+	// Death Sounds
+	"sound_death"				"Player.Death"
+	"sound_crit_death"				"TFPlayer.CritDeath"
+	"sound_melee_death"			"Player.MeleeDeath"
+	"sound_explosion_death"			"Player.ExplosionDeath"		
+}

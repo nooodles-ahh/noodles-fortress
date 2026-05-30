@@ -1,0 +1,69 @@
+//
+// Team Fortress - Engineer Player Class
+//
+PlayerClass
+{
+	// Attributes.
+	"name"			"engineer"
+	"model"			"models/player/engineer.mdl"
+	"model_hwm"		"models/player/hwm/engineer.mdl"
+	"model_hands"	"models/weapons/c_models/c_engineer_arms.mdl"
+	"localize_name"	"TF_Class_Name_Engineer"
+	"speed_max"		"300"
+	"flag_speed_max"	"220"
+	"armor_max"		"50"
+	"armortype"		"2"
+	"health_max"		"80"
+
+	// Grenades.
+	"grenade1"		"TF_WEAPON_GRENADE_NORMAL"
+	"grenade2"		"TF_WEAPON_GRENADE_EMP"
+
+	// Weapons.
+	"weapon1"		"TF_WEAPON_WRENCH"
+	"weapon2"		"TF_WEAPON_PISTOL"
+	"weapon3"		"TF_WEAPON_SHOTGUN_PRIMARY"
+	"weapon4"		"TF_WEAPON_PDA_ENGINEER_BUILD"
+	"weapon5"		"TF_WEAPON_PDA_ENGINEER_DESTROY"
+	
+	// Buildables
+	"buildable1"	"OBJ_SENTRYGUN"
+	"buildable2"	"OBJ_DISPENSER"
+	"buildable3"	"OBJ_TELEPORTER"
+	
+	"primary"
+	{
+		"TF_WEAPON_SHOTGUN_PRIMARY"	"1"
+	}
+	"secondary"
+	{
+		"TF_WEAPON_PISTOL"	"1"
+	}
+	"melee"
+	{
+		"TF_WEAPON_WRENCH"	"1"
+	}
+	"pda1"
+	{
+		"TF_WEAPON_PDA_ENGINEER_BUILD"	"1"
+	}
+	"pda2"
+	{
+		"TF_WEAPON_PDA_ENGINEER_DESTROY"	"1"
+	}
+	
+	AmmoMax
+	{
+		"tf_ammo_primary"	"32"
+		"tf_ammo_secondary"	"200"
+		"tf_ammo_metal"		"200"
+		"tf_ammo_grenades1"	"2"
+		"tf_ammo_grenades2"	"2"
+	}	
+
+	// Death Sounds
+	"sound_death"				"Player.Death"
+	"sound_crit_death"				"TFPlayer.CritDeath"
+	"sound_melee_death"			"Player.MeleeDeath"
+	"sound_explosion_death"			"Player.ExplosionDeath"		
+}

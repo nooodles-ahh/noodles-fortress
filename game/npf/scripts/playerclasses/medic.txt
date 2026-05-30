@@ -1,0 +1,59 @@
+//
+// Team Fortress - Medic Player Class
+//
+PlayerClass
+{
+	// Attributes.
+	"name"			"medic"
+	"model"			"models/player/medic.mdl"
+	"model_hwm"		"models/player/hwm/medic.mdl"
+	"model_hands"	"models/weapons/c_models/c_medic_arms.mdl"
+	"localize_name"	"TF_Class_Name_Medic"
+	"speed_max"		"320"
+	"flag_speed_max"	"220"
+	"armor_max"		"100"
+	"armortype"		"2"
+	"health_max"		"90"
+
+	// Grenades.
+	"grenade1"		"TF_WEAPON_GRENADE_NORMAL"
+	"grenade2"		"TF_WEAPON_GRENADE_HEAL"
+
+	// Weapons.
+	"weapon1"		"TF_WEAPON_SYRINGE"
+	"weapon2"		"TF_WEAPON_MEDIGUN"
+	"weapon3"		"TF_WEAPON_SMG_MEDIC"
+	
+	//"DontDoAirwalk"	"1"
+	//"DontDoNewJump"	"1"
+	
+	"primary"
+	{
+		"TF_WEAPON_SMG_MEDIC"	"1"
+		"TF_WEAPON_SYRINGEGUN_MEDIC" "1"
+	}
+	"secondary"
+	{
+		"TF_WEAPON_MEDIGUN"	"1"
+	}
+	
+	"melee"
+	{
+		"TF_WEAPON_SYRINGE"	"1"
+	}
+
+	AmmoMax
+	{
+		"tf_ammo_primary"	"105"
+		"tf_ammo_secondary"	"300"
+		"tf_ammo_metal"		"100"
+		"tf_ammo_grenades1"	"2"
+		"tf_ammo_grenades2"	"2"
+	}	
+
+	// Death Sounds
+	"sound_death"				"Player.Death"
+	"sound_crit_death"				"TFPlayer.CritDeath"
+	"sound_melee_death"			"Player.MeleeDeath"
+	"sound_explosion_death"			"Player.ExplosionDeath"		
+}
