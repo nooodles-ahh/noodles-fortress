@@ -7,6 +7,9 @@ My intention with this is to finish everything I wanted to finish, plus anything
 
 # Planned features
 ## Actual things
+- Asset compatiblity/feature matching with 0.7.3 
+  - This is the last version I think I'll care for. Not particularly interested in DOM and last instance I see of things I originally did like armor regen
+  - Probably not following stat/balance changes like armor regen lol
 - ~Fix jittery control points~ - DONE
 - 2fort with sewer water at different heights that's not awful
 	- Problem is that it uses the heigher water height to determine the clipping of the view plane. I can fix it by breaking visibility in a strange way, but it's not very reliable so I need something a bit smarter and more controlled. Might just have to manually edit the water vis leaves.
