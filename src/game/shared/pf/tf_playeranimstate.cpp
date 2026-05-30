@@ -471,18 +471,13 @@ void CTFPlayerAnimState::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 #ifdef PF2
 	case PLAYERANIMEVENT_GRENADE1_DRAW:
 	{
-		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GRENADE1_DRAW);
-		break;
-	}
-	case PLAYERANIMEVENT_GRENADE1_IDLE:
-	{
-		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GRENADE1_IDLE);
+		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GESTURE_GRENADE1_PRIME );
 		break;
 	}
 
 	case PLAYERANIMEVENT_GRENADE1_THROW:
 	{
-		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GRENADE1_ATTACK);
+		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GESTURE_GRENADE1_THROW );
 		break;
 	}
 
@@ -490,19 +485,13 @@ void CTFPlayerAnimState::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 
 	case PLAYERANIMEVENT_GRENADE2_DRAW:
 	{
-		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GRENADE2_DRAW);
-		break;
-	}
-
-	case PLAYERANIMEVENT_GRENADE2_IDLE:
-	{
-		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GRENADE2_IDLE);
+		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GESTURE_GRENADE2_PRIME );
 		break;
 	}
 
 	case PLAYERANIMEVENT_GRENADE2_THROW:
 	{
-		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GRENADE2_ATTACK);
+		RestartGesture(GESTURE_SLOT_GRENADE, ACT_MP_GESTURE_GRENADE2_THROW );
 		break;
 	}
 #endif

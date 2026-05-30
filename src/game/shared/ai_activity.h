@@ -2474,6 +2474,12 @@ typedef enum
 	ACT_MP_CYOA_PDA_IDLE,
 	ACT_MP_CYOA_PDA_OUTRO,
 
+#ifdef PF2
+	ACT_MP_GESTURE_GRENADE1_PRIME,
+	ACT_MP_GESTURE_GRENADE1_THROW,
+	ACT_MP_GESTURE_GRENADE2_PRIME,
+	ACT_MP_GESTURE_GRENADE2_THROW,
+#endif
 
 	// this is the end of the global activities, private per-monster activities start here.
 	LAST_SHARED_ACTIVITY,

@@ -81,6 +81,7 @@ void CTFWeaponBaseGrenade::Spawn( void )
 	BaseClass::Spawn();
 
 	SetViewModelIndex( TF_VM_OFFHAND );
+	m_bShouldDraw = false;
 
 #ifdef GAME_DLL
 	RegisterThinkContext("BeepThink");
@@ -120,7 +121,7 @@ void CTFWeaponBaseGrenade::WeaponReset()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFWeaponBaseGrenade::Prime() 
+void CTFWeaponBaseGrenade::Prime( bool isPrimary )
 {
 #if defined( CLIENT_DLL )
 	if ( prediction && !prediction->IsFirstTimePredicted() )
@@ -160,6 +161,29 @@ void CTFWeaponBaseGrenade::Prime()
 
 	m_bPrimed = true;
 	m_bThrown = false;
+	m_isPrimary = isPrimary;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CTFWeaponBaseGrenade::Deploy( void )
+{
+	m_bShouldDraw = false;
+	bool bDeploy = BaseClass::Deploy();
+	if ( bDeploy )
+	{
+		CTFPlayer *pPlayer = ToTFPlayer( GetOwner() );
+		if ( !pPlayer )
+			return false;
+
+		if( m_isPrimary )
+			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_GRENADE1_DRAW );
+		else
+			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_GRENADE2_DRAW );
+	}
+
+	return bDeploy;
 }
 
 //-----------------------------------------------------------------------------
@@ -373,11 +397,16 @@ void CTFWeaponBaseGrenade::ItemPostFrame()
 	if( bThrow && m_flNextPrimaryAttack <= gpGlobals->curtime )
 	{
 		// Start throwing
-		pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_GRENADE );
+		if ( m_isPrimary )
+			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_GRENADE1_THROW );
+		else
+			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_GRENADE2_THROW );
+
 		SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 
 		//PoseParameterOverride( true );
 		Throw();
+		m_bShouldDraw = false;
 
 		m_flTimeWeaponIdle = m_flNextPrimaryAttack = gpGlobals->curtime+GetViewModelSequenceDuration();
 		return;
@@ -434,7 +463,7 @@ bool CTFWeaponBaseGrenade::ShouldDraw( void )
 	if( !BaseClass::ShouldDraw() )
 	{
 		// Grenades need to be visible whenever they're being primed & thrown
-		if( !m_bPrimed )
+		if ( !m_bPrimed )
 			return false;
 
 		// Don't draw primed grenades for local player in first person players
@@ -442,7 +471,7 @@ bool CTFWeaponBaseGrenade::ShouldDraw( void )
 			return false;
 	}
 
-	return true;
+	return m_bShouldDraw;
 }
 
 //-----------------------------------------------------------------------------

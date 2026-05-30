@@ -36,8 +36,8 @@ public:
 
 	virtual void 			WeaponReset();
 	bool					IsPrimed( void );
-	void					Prime( void );
-
+	void					Prime( bool isPrimary );
+	virtual bool			Deploy( void );
 	void					Throw( void );
 
 	bool					ShouldDetonate( void );
@@ -52,6 +52,7 @@ public:
 #ifdef CLIENT_DLL
 
 	bool					ShouldDraw( void );
+	void					UnhideGrenade() { m_bShouldDraw = true; }
 
 	virtual void	OnDataChanged( DataUpdateType_t updateType );
 
@@ -73,6 +74,8 @@ protected:
 	CNetworkVar( bool, m_bPrimed );			// Set to true when the pin has been pulled but the grenade hasn't been thrown yet.
 	CNetworkVar( float, m_flThrowTime );	// the time at which the grenade will be thrown.  If this value is 0 then the time hasn't been set yet.
 	bool m_bThrown;			// True when the player is throwing the grenade
+	bool m_isPrimary;
+	bool m_bShouldDraw;
 
 private:
 

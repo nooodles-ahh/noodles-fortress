@@ -1735,6 +1735,7 @@ void CTFWeaponBase::OnDataChanged( DataUpdateType_t type )
 		WeaponReset();
 	}
 
+#if 0
 	//Here we go...
 	//Since we can't get a repro for the invisible weapon thing, I'll fix it right up here:
 	CTFPlayer *pOwner = ToTFPlayer( GetOwnerEntity() );
@@ -1757,6 +1758,7 @@ void CTFWeaponBase::OnDataChanged( DataUpdateType_t type )
 			}
 		}
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------------

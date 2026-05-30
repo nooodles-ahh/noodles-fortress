@@ -47,7 +47,13 @@
 			
 			// Mounts PF2's VPKs
 			game+mod			|all_source_engine_paths|../../sourcemods/pf2
+			game+mod			|all_source_engine_paths|../../sourcemods/pf2/pf2_hotfix.vpk
+			game+mod			|all_source_engine_paths|../../sourcemods/pf2/pf2_patch.vpk
 			game+mod			|all_source_engine_paths|../../sourcemods/pf2/pf2_misc.vpk
+			game+mod			|all_source_engine_paths|../../sourcemods/pf2/pf2_sound.vpk
+			game+mod			|all_source_engine_paths|../../sourcemods/pf2/pf2_textures.vpk
+			game+mod			|all_source_engine_paths|../../sourcemods/pf2/pf2_models.vpk
+			game+mod			|all_source_engine_paths|../../sourcemods/pf2/pf2_scripts.vpk
 
 			// We search VPK files before ordinary folders, because most files will be found in
 			// VPK and we can avoid making thousands of file system calls to attempt to open files

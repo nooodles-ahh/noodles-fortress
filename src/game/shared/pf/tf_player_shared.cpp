@@ -3462,7 +3462,7 @@ void CTFPlayer::HandleGrenades()
 				if( prediction && !prediction->IsFirstTimePredicted() )
 					return;
 #endif
-				pGrenade->Prime();
+				pGrenade->Prime( iGrenade == 0 );
 				SetPrimedState( PRIME_STATE_PRE_DEPLOY );
 				return;
 			}
@@ -3481,12 +3481,13 @@ void CTFPlayer::HandleGrenades()
 	{
 		if( GetActiveTFWeapon()->HasWeaponIdleTimeElapsed() )
 		{
+			SetPrimedState( PRIME_STATE_DEPLOYED );
 			if( pf_grenades_holstering.GetBool() )
 			{
+				GetActiveTFWeapon()->SetWeaponVisible( false );
 				SetOffHandWeapon( pPrimedGrenade );
 			}
 			SetNextAttack( gpGlobals->curtime + 0.8f );
-			SetPrimedState( PRIME_STATE_DEPLOYED );
 			return;
 		}
 	}

@@ -81,6 +81,7 @@
 #include "pf_cvars.h"
 #include "pf_obj_spawnroomturret.h"
 #include "clientsteamcontext.h"
+#include "tf_weaponbase_grenade.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -4121,6 +4122,20 @@ void C_TFPlayer::FireEvent( const Vector& origin, const QAngle& angles, int even
 		data.m_hEntity = ClientEntityList().EntIndexToHandle( entindex() );
 		DispatchEffect( "TF_ThrowCigarette", data );
 		return;
+	}
+	else if( event == AE_GRENADE_UNHIDE )
+	{
+		const TFPlayerClassData_t *pData = m_PlayerClass.GetData();
+		CTFWeaponBaseGrenade *pGrenade0 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[0] ) );
+		CTFWeaponBaseGrenade *pGrenade1 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[1] ) );
+		if ( pGrenade0 && pGrenade0->IsPrimed() )
+		{
+			pGrenade0->UnhideGrenade();
+		}
+		else if ( pGrenade1 && pGrenade1->IsPrimed() )
+		{
+			pGrenade1->UnhideGrenade();
+		}
 	}
 	else
 		BaseClass::FireEvent( origin, angles, event, options );
