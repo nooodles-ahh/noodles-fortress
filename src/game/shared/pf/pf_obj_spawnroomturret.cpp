@@ -106,15 +106,16 @@ END_NETWORK_TABLE()
 // Server specific.
 #ifdef GAME_DLL
 BEGIN_DATADESC( CObjectSpawnroomTurret )
-    DEFINE_KEYFIELD( m_bGroundTurret, FIELD_BOOLEAN, "GroundTurret" ),
 	DEFINE_KEYFIELD( m_iszRespawnRoomName, FIELD_STRING, "respawnroomname" ),
 	DEFINE_KEYFIELD( m_bHasHealth, FIELD_BOOLEAN, "HasHealth" ),
 	DEFINE_KEYFIELD( m_iMaxHealth, FIELD_INTEGER, "Health" ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "RoundActivate", InputRoundActivate ),
 END_DATADESC()
 
-LINK_ENTITY_TO_CLASS( obj_srt, CObjectSpawnroomTurret );
-PRECACHE_REGISTER( obj_srt );
+LINK_ENTITY_TO_CLASS( obj_srt_ceiling, CObjectSpawnroomTurret );
+PRECACHE_REGISTER( obj_srt_ceiling );
+LINK_ENTITY_TO_CLASS( obj_srt_ground, CObjectSpawnroomTurret );
+PRECACHE_REGISTER( obj_srt_ground );
 #endif
 
 CObjectSpawnroomTurret::CObjectSpawnroomTurret()
@@ -136,6 +137,7 @@ CObjectSpawnroomTurret::CObjectSpawnroomTurret()
 	m_hRespawnRoom = NULL;
 	m_flTimeToHeal = 1e16;
 #endif
+	m_bGroundTurret = false;
 }
 
 CObjectSpawnroomTurret::~CObjectSpawnroomTurret()
@@ -208,6 +210,12 @@ void CObjectSpawnroomTurret::GetTargetIDDataString( wchar_t* sDataString, int iM
 //=============================================================
 //  Server functions
 //=============================================================
+void CObjectSpawnroomTurret::PostConstructor( const char *szClassname )
+{
+	BaseClass::PostConstructor( szClassname );
+	if ( !V_stricmp( szClassname, "obj_srt_ground" ) )
+		m_bGroundTurret = true;
+}
 
 void CObjectSpawnroomTurret::Spawn()
 {

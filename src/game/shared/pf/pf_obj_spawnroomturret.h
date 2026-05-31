@@ -50,6 +50,7 @@ private:
 public:
     DECLARE_DATADESC();
 	static CObjectSpawnroomTurret* Create(const Vector &vOrigin, const QAngle &vAngles);
+	virtual void PostConstructor( const char *szClassname );
 
 	// overrides
 	virtual void Precache();
