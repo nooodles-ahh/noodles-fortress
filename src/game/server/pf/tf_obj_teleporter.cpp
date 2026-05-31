@@ -814,7 +814,7 @@ void CObjectTeleporter::TeleporterThink(void)
 #endif
 					// Unzoom if we are a sniper zoomed!
 					if ((pTeleportingPlayer->GetPlayerClass()->GetClassIndex() == TF_CLASS_SNIPER) &&
-						pTeleportingPlayer->m_Shared.InCond(TF_COND_AIMING))
+						pTeleportingPlayer->m_Shared.InCond( TF_COND_ZOOMED ))
 					{
 						CTFWeaponBase* pWpn = pTeleportingPlayer->GetActiveTFWeapon();
 						if ( pWpn && pWpn->GetWeaponID() == TF_WEAPON_SNIPERRIFLE )
