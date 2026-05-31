@@ -2578,14 +2578,6 @@ bool CTFPlayerShared::IsLoser( void )
 
 			return true;
 		}
-
-
-		//if we are on the winning team give us crits
-		// -Nbc66
-		if( iWinner == m_pOuter->GetTeamNumber() && !InCond( TF_COND_CRITBOOSTED ) && !pf_force_crits.GetBool() )
-		{
-			AddCond( TF_COND_CRITBOOSTED );
-		}
 	}
 	return false;
 }

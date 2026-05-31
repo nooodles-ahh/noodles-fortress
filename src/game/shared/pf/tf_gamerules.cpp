@@ -4002,6 +4002,10 @@ void CTFGameRules::InternalHandleTeamWin( int iWinningTeam )
 						pWeapon->SetWeaponVisible( false );
 					}
 				}
+				else if ( pPlayer->GetTeamNumber() == iWinningTeam )
+				{
+					pPlayer->m_Shared.AddCond( TF_COND_CRITBOOSTED );
+				}
 
 				pPlayer->TeamFortress_SetSpeed();
 			}

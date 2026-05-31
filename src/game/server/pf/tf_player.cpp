@@ -910,7 +910,9 @@ void CTFPlayer::Spawn()
 	BaseClass::Spawn();
 	m_Shared.RemoveAllCond(this);
 
-	if( pf_force_crits.GetBool() )
+	if ( pf_force_crits.GetBool() ||
+		( TFGameRules() && TFGameRules()->RoundHasBeenWon() && GetTeamNumber() == TFGameRules()->GetWinningTeam() )
+		)
 	{
 		m_Shared.AddCond( TF_COND_CRITBOOSTED );
 	}
