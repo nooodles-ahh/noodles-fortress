@@ -71,7 +71,7 @@ void CTFSyringe::OnEntityHit(CBaseEntity *pEntity)
 		float flChargeAmount = min( iHealthIncreased / 1000.0f, pf_syringe_max_charge_on_hit.GetFloat() );
 		if( flChargeAmount > 0 )
 		{
-			CTFWeaponBase *pWpn = (CTFWeaponBase *)pPlayer->Weapon_OwnsThisID( TF_WEAPON_MEDIGUN );
+			CTFWeaponBase *pWpn = (CTFWeaponBase *) pOwner->Weapon_OwnsThisID( TF_WEAPON_MEDIGUN );
 			if( pWpn )
 			{
 				CWeaponMedigun *pMedigun = dynamic_cast <CWeaponMedigun *>(pWpn);
