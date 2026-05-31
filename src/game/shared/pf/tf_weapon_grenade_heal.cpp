@@ -185,6 +185,9 @@ void CTFGrenadeHealProjectile::Detonate()
 		if (!pEntity->IsPlayer())
 			continue;
 
+		if ( !RadiusHit( GetAbsOrigin(), this, pEntity ) )
+			continue;
+
 		CTFPlayer *pPlayer = ToTFPlayer( pEntity );
 
 		if (!pPlayer)
