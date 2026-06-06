@@ -4002,7 +4002,17 @@ void C_TFPlayer::InitializePoseParams( void )
 Vector C_TFPlayer::GetChaseCamViewOffset( CBaseEntity *target )
 {
 	if( target->IsBaseObject() )
+	{
+		C_BaseObject *pObj = static_cast<C_BaseObject*>( target);
+		if( pObj && pObj->GetType() == OBJ_SRT )
+		{
+			C_ObjectSpawnroomTurret *pSRT = static_cast<C_ObjectSpawnroomTurret*>(pObj);
+			if( pSRT && !pSRT->IsGroundTurret() )
+				return Vector( 0, 0, -30 );
+			return Vector( 0, 0, 30 );
+		}
 		return Vector( 0, 0, 64 );
+	}
 
 	return BaseClass::GetChaseCamViewOffset( target );
 }
@@ -4611,22 +4621,22 @@ void C_TFPlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float&
 	Vector vecCamDesired = pTarget->GetObserverCamOrigin();	// Returns ragdoll origin if they're ragdolled
 	VectorAdd( vecCamDesired, GetChaseCamViewOffset( pTarget ), vecCamDesired );
 	Vector vecCamTarget = vecCamDesired;
-	bool bSRT = false;
+	bool bCeilingSRT = false;
 	if ( pTarget->IsAlive() )
 	{
 		// horrific check to get the correct srt position
-		C_ObjectSpawnroomTurret *pSRT = dynamic_cast<C_ObjectSpawnroomTurret *>(pTarget);
-		if(pSRT)
+		C_ObjectSpawnroomTurret *pSRT = nullptr;
+		if( pTarget->IsBaseObject() )
 		{
-			if(!pSRT->IsGroundTurret())
+			C_BaseObject *pObj = static_cast<C_BaseObject *>( pTarget );
+			if ( pObj && pObj->GetType() == OBJ_SRT )
 			{
-				bSRT = true;
-				Vector maxs = pTarget->GetBaseAnimating() ? VEC_HULL_MAX_SCALED( pTarget->GetBaseAnimating() ) : VEC_HULL_MAX;
-				vecCamTarget.z -= (maxs.z * 1.1f); // magic number 1
+				pSRT = static_cast<C_ObjectSpawnroomTurret *>( pObj );
+				bCeilingSRT = pSRT && !pSRT->IsGroundTurret();
 			}
 		}
 
-		if(!bSRT)
+		if( !pSRT )
 		{
 			// Look at their chest, not their head
 			Vector maxs = pTarget->GetBaseAnimating() ? VEC_HULL_MAX_SCALED( pTarget->GetBaseAnimating() ) : VEC_HULL_MAX;
@@ -4646,12 +4656,15 @@ void C_TFPlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, float&
 	VectorNormalize( vecToTarget );
 
 	// Stop a few units away from the target, and shift up to be at the same height
-	vecTargetPos = vecCamTarget - (vecToTarget * m_flFreezeFrameDistance);
-	float flEyePosZ = pTarget->EyePosition().z;
-	vecTargetPos.z = flEyePosZ + m_flFreezeZOffset;
-	if(bSRT)
+	vecTargetPos = vecCamTarget - ( vecToTarget * m_flFreezeFrameDistance );
+	if( bCeilingSRT )
 	{
-		vecTargetPos.z -= 90.0f; // magic number 2
+		vecTargetPos.z -= 45;
+	}
+	else
+	{
+		float flEyePosZ = pTarget->EyePosition().z;
+		vecTargetPos.z = flEyePosZ + m_flFreezeZOffset;
 	}
 
 	// Now trace out from the target, so that we're put in front of any walls
