@@ -241,7 +241,17 @@ void CTFFlameThrower::ItemPostFrame()
 		SecondaryAttack();
 	}
 
-	BaseClass::ItemPostFrame();
+	// -----------------------
+	//  No buttons down
+	// -----------------------
+	if ( m_iWeaponState == FT_STATE_IDLE || !((pOwner->m_nButtons & IN_ATTACK) || (pOwner->m_nButtons & IN_ATTACK2) || (CanReload() && pOwner->m_nButtons & IN_RELOAD)))
+	{
+		// no fire buttons down or reloading
+		if ( !ReloadOrSwitchWeapons() && ( m_bInReload == false ) )
+		{
+			WeaponIdle();
+		}
+	}
 }
 
 class CTraceFilterIgnoreObjects : public CTraceFilterSimple
