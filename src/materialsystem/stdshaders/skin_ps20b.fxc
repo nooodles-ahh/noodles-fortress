@@ -219,7 +219,7 @@ float4 main( PS_INPUT i ) : COLOR
 		// Summation of diffuse illumination from all local lights
 		diffuseLighting = PixelShaderDoLighting( vWorldPos, worldSpaceNormal,
 			float3( 0.0f, 0.0f, 0.0f ), false, true, vLightAtten,
-			cAmbientCube, NormalizeRandRotSampler, nNumLights, cLightInfo, true,
+			cAmbientCube, NormalizeRandRotSampler, nNumLights, cLightInfo, false,
 
 			// These parameters aren't passed by generic shaders:
 			false, 1.0f,
