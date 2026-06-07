@@ -7382,6 +7382,7 @@ void CTFPlayer::NoteSpokeVoiceCommand( const char *pszScenePlayed )
 bool CTFPlayer::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits ) const
 {
 	bool bDoLagComp = false;
+	bool bDoMeleeLagComp = false;
 
 	//Do Lag comp on medics trying to heal team mates.
 	if( pPlayer->GetTeamNumber() == GetTeamNumber() )
@@ -7409,6 +7410,7 @@ bool CTFPlayer::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, const 
 				case TF_WEAPON_SYRINGE:
 				case TF_WEAPON_WRENCH:
 					bDoLagComp = true;
+					bDoMeleeLagComp = true;
 					break;
 				default:
 					break;
@@ -7434,17 +7436,19 @@ bool CTFPlayer::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, const 
 	if( vHisOrigin.DistTo( vMyOrigin ) < maxDistance )
 		return true;
 
-	// If their origin is not within a 45 degree cone in front of us, no need to lag compensate.
-	Vector vForward;
-	AngleVectors( pCmd->viewangles, &vForward );
+	if( !bDoMeleeLagComp )
+	{
+		// If their origin is not within a 45 degree cone in front of us, no need to lag compensate.
+		Vector vForward;
+		AngleVectors( pCmd->viewangles, &vForward );
 
-	Vector vDiff = vHisOrigin - vMyOrigin;
-	VectorNormalize( vDiff );
+		Vector vDiff = vHisOrigin - vMyOrigin;
+		VectorNormalize( vDiff );
 
-	float flCosAngle = 0.707107f;	// 45 degree angle
-	if( vForward.Dot( vDiff ) < flCosAngle )
-		return false;
-
+		float flCosAngle = 0.707107f;	// 45 degree angle
+		if( vForward.Dot( vDiff ) < flCosAngle )
+			return false;
+	}
 	return true;
 }
 
