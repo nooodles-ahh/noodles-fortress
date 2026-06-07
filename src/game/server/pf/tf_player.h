@@ -188,6 +188,7 @@ public:
 	virtual void		SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalking );
 
 	void HandleGrenades();
+	void TryPrimeGrenade();
 	int GetPrimedState( void );
 	void SetPrimedState( int iState );
 	void FinishThrowGrenade( void );

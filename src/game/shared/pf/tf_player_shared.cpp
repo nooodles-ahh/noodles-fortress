@@ -3391,85 +3391,13 @@ void CTFPlayer::ItemPostFrame()
 #ifdef PF2
 void CTFPlayer::HandleGrenades()
 {
-	// Cyanide; Avoid having to check if it's the invis watch (or potentially something else)
-	const TFPlayerClassData_t *pData = m_PlayerClass.GetData();
-	CTFWeaponBaseGrenade *pGrenade0 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[0] ) );
-	CTFWeaponBaseGrenade *pGrenade1 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[1] ) );
-	CTFWeaponBaseGrenade *pPrimedGrenade = nullptr;
-	if ( pGrenade0 && pGrenade0->IsPrimed() )
-		pPrimedGrenade = pGrenade0;
-	else if ( pGrenade1 && pGrenade1->IsPrimed() )
-		pPrimedGrenade = pGrenade1;
-
-	if( !GetPrimedState() && !pPrimedGrenade )
+	if( GetPrimedState() == PRIME_STATE_NONE )
 	{
 		// are we pressing a grenade button?
-		if( !(m_afButtonPressed & (IN_GRENADE1 | IN_GRENADE2)) )
-			return;
-
-		while( true )
-		{
-			if( !CanAttack() )
-				break;
-
-			if( !GetActiveTFWeapon() )
-				break;
-
-			if( GetActiveTFWeapon()->IsLowered() || !GetActiveTFWeapon()->GetTFWpnData().m_bCanThrowGrenade )
-				break;
-
-			if( m_Shared.m_flNextThrowTime > gpGlobals->curtime )
-				break;
-
-			if( m_Shared.InCond( TF_COND_ZOOMED ) || m_Shared.InCond( TF_COND_AIMING ) )
-				break;
-
-			// if we pressed a grenade button we can assume it's one or the other
-			int iGrenade = m_afButtonPressed & IN_GRENADE1 ? 0 : 1;
-			
-			CTFWeaponBaseGrenade *pGrenade = (CTFWeaponBaseGrenade *)Weapon_OwnsThisID( pData->m_aGrenades[iGrenade] );
-			if( pGrenade && pGrenade->HasAmmo() )
-			{
-				if( TFGameRules()->GrenadesRegenerate() )
-				{
-					float flRegenTime = iGrenade == 0 ? m_Shared.m_flGrenade1RegenTime.Get() : m_Shared.m_flGrenade2RegenTime.Get();
-					if( flRegenTime > gpGlobals->curtime )
-						break;
-				}
-
-				MSG_NOTIFY_ON_HIT;
-				bool bLowered = true;
-				if( pf_grenades_holstering.GetBool() && pGrenade->ShouldLowerMainWeapon() )
-				{
-					bLowered = false;
-					if( GetActiveTFWeapon() && !GetActiveTFWeapon()->IsLowered() )
-					{
-						GetActiveTFWeapon()->Lower();
-						// Remove the grenade buttons from recently pressed
-						m_afButtonPressed &= ~(IN_GRENADE1 | IN_GRENADE2);
-					}
-				}
-
-#ifdef CLIENT_DLL
-				if( prediction && !prediction->IsFirstTimePredicted() )
-					return;
-#endif
-				pGrenade->Prime( iGrenade == 0 );
-				SetPrimedState( PRIME_STATE_PRE_DEPLOY );
-				return;
-			}
-			break;
-		}
-
-#ifdef CLIENT_DLL
-		if( m_flNextDenySound < gpGlobals->curtime )
-		{
-			EmitSound( "Player.DenyWeaponSelection" );
-			m_flNextDenySound = gpGlobals->curtime + 0.5;
-		}
-#endif
+		if( (m_afButtonPressed & (IN_GRENADE1 | IN_GRENADE2)) )
+			TryPrimeGrenade();
 	}
-	else if( GetPrimedState() == PRIME_STATE_PRE_DEPLOY && pPrimedGrenade )
+	else if( GetPrimedState() == PRIME_STATE_PRE_DEPLOY )
 	{
 		if( GetActiveTFWeapon()->HasWeaponIdleTimeElapsed() )
 		{
@@ -3477,12 +3405,82 @@ void CTFPlayer::HandleGrenades()
 			if( pf_grenades_holstering.GetBool() )
 			{
 				GetActiveTFWeapon()->SetWeaponVisible( false );
+				// Cyanide; Avoid having to check if it's the invis watch (or potentially something else)
+				const TFPlayerClassData_t *pData = m_PlayerClass.GetData();
+				CTFWeaponBaseGrenade *pGrenade0 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[0] ) );
+				CTFWeaponBaseGrenade *pGrenade1 = static_cast<CTFWeaponBaseGrenade *>( Weapon_OwnsThisID( pData->m_aGrenades[1] ) );
+				CTFWeaponBaseGrenade *pPrimedGrenade = nullptr;
+				if ( pGrenade0 && pGrenade0->IsPrimed() )
+					pPrimedGrenade = pGrenade0;
+				else if ( pGrenade1 && pGrenade1->IsPrimed() )
+					pPrimedGrenade = pGrenade1;
+
 				SetOffHandWeapon( pPrimedGrenade );
 			}
 			SetNextAttack( gpGlobals->curtime + 0.8f );
-			return;
 		}
 	}
+}
+
+void CTFPlayer::TryPrimeGrenade()
+{
+	if ( !CanAttack() || !GetActiveTFWeapon() || GetActiveTFWeapon()->IsLowered() ||
+		!GetActiveTFWeapon()->GetTFWpnData().m_bCanThrowGrenade ||
+		m_Shared.m_flNextThrowTime > gpGlobals->curtime ||
+		m_Shared.InCond( TF_COND_ZOOMED ) || m_Shared.InCond( TF_COND_AIMING ) )
+		return;
+
+	// assume it's one or the other, but assume the primary by default
+	int iGrenade = m_afButtonPressed & IN_GRENADE1 ? 0 : 1;
+
+	const TFPlayerClassData_t *pData = m_PlayerClass.GetData();
+	CTFWeaponBaseGrenade *pGrenade = (CTFWeaponBaseGrenade *) Weapon_OwnsThisID( pData->m_aGrenades[iGrenade] );
+	if ( pGrenade && pGrenade->HasAmmo() )
+	{
+		if ( TFGameRules()->GrenadesRegenerate() )
+		{
+			float flRegenTime = iGrenade == 0 ? m_Shared.m_flGrenade1RegenTime.Get() : m_Shared.m_flGrenade2RegenTime.Get();
+			if ( flRegenTime > gpGlobals->curtime )
+			{
+#ifdef CLIENT_DLL
+				if ( m_flNextDenySound < gpGlobals->curtime )
+				{
+					EmitSound( "Player.DenyWeaponSelection" );
+					m_flNextDenySound = gpGlobals->curtime + 0.5;
+				}
+#endif
+				return;
+			}
+		}
+
+		bool bLowered = true;
+		if ( pf_grenades_holstering.GetBool() && pGrenade->ShouldLowerMainWeapon() )
+		{
+			bLowered = false;
+			if ( GetActiveTFWeapon() && !GetActiveTFWeapon()->IsLowered() )
+			{
+				GetActiveTFWeapon()->Lower();
+				// Remove the grenade buttons from recently pressed
+				m_afButtonPressed &= ~( IN_GRENADE1 | IN_GRENADE2 );
+			}
+		}
+
+#ifdef CLIENT_DLL
+		if ( prediction && !prediction->IsFirstTimePredicted() )
+			return;
+#endif
+		pGrenade->Prime( iGrenade == 0 );
+		SetPrimedState( PRIME_STATE_PRE_DEPLOY );
+		return;
+	}
+
+#ifdef CLIENT_DLL
+	if ( m_flNextDenySound < gpGlobals->curtime )
+	{
+		EmitSound( "Player.DenyWeaponSelection" );
+		m_flNextDenySound = gpGlobals->curtime + 0.5;
+	}
+#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -248,6 +248,7 @@ public:
 	virtual	bool		Weapon_Switch( C_BaseCombatWeapon *pWeapon, int viewmodelindex = 0 );
 
 	void HandleGrenades();
+	void TryPrimeGrenade();
 	int GetPrimedState( void );
 	void SetPrimedState( int iState );
 	void FinishThrowGrenade( void );
