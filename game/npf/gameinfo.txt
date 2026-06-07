@@ -1,6 +1,6 @@
 "GameInfo"
 {
-	game					"Noodles' Pre-Fortress"
+	game					"Noodles' Fortress"
 	type 					multiplayer_only
 	nomodels				1
 	nohimodel 				1
