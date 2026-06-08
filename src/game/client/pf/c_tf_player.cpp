@@ -1135,6 +1135,24 @@ public:
 EXPOSE_INTERFACE( CProxyUrineLevel, IMaterialProxy, "YellowLevel" IMATERIAL_PROXY_INTERFACE_VERSION );
 
 //-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+class CProxyInvisStub : public CResultProxy
+{
+public:
+	virtual bool Init( IMaterial *pMaterial, KeyValues *pKeyValues )
+	{
+		return true;
+	}
+
+	virtual void OnBind( void *pC_BaseEntity )
+	{
+	}
+};
+
+EXPOSE_INTERFACE( CProxyInvisStub, IMaterialProxy, "invis" IMATERIAL_PROXY_INTERFACE_VERSION );
+
+//-----------------------------------------------------------------------------
 // Purpose: Used for the weapon glow color when critted
 //-----------------------------------------------------------------------------
 class CProxyModelGlowColor : public CResultProxy
