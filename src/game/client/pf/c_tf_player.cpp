@@ -83,6 +83,7 @@
 #include "clientsteamcontext.h"
 #include "tf_weaponbase_grenade.h"
 #endif
+#include "tf_viewmodel.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -950,29 +951,26 @@ void CSpyInvisProxy::OnBind( C_BaseEntity *pEnt )
 
 	m_pPercentInvisible->SetFloatValue( pPlayer->GetEffectiveInvisibilityLevel() );
 
-	float r, g, b;
-
-	switch( pPlayer->GetTeamNumber() )
-	{
-	case TF_TEAM_RED:
-		r = 1.0; g = 0.5; b = 0.4;
-		break;
-
-	case TF_TEAM_BLUE:
-	default:
-		r = 0.4; g = 0.5; b = 1.0;
-		break;
-	}
+	float r = 1.f, g = 1.f, b = 1.f;
 
 	C_TFPlayer *pLocalPlayer = C_TFPlayer::GetLocalTFPlayer();
-	if( pf_team_colored_spy_cloak.GetBool() && !(pLocalPlayer && pLocalPlayer->m_Shared.InCond(TF_COND_HALLUCINATING)) )
+	if( !( pLocalPlayer && pLocalPlayer->m_Shared.InCond( TF_COND_HALLUCINATING ) ) || 
+		!pf_team_colored_spy_cloak.GetBool() )
 	{
-		m_pCloakColorTint->SetVecValue( r, g, b );
+		switch( pPlayer->GetTeamNumber() )
+		{
+		case TF_TEAM_RED:
+			r = 1.0f; g = 0.5f; b = 0.4f;
+			break;
+
+		case TF_TEAM_BLUE:
+		default:
+			r = 0.4f; g = 0.5f; b = 1.0f;
+			break;
+		}
 	}
-	else
-	{
-		m_pCloakColorTint->SetVecValue( 1.0, 1.0, 1.0 );
-	}
+
+	m_pCloakColorTint->SetVecValue( r, g, b );
 }
 
 IMaterial *CSpyInvisProxy::GetMaterial()
@@ -984,6 +982,133 @@ IMaterial *CSpyInvisProxy::GetMaterial()
 }
 
 EXPOSE_INTERFACE( CSpyInvisProxy, IMaterialProxy, "spy_invis" IMATERIAL_PROXY_INTERFACE_VERSION );
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Generic invis proxy that can handle invis for both weapons & viewmodels.
+//			Makes the vm_invis & weapon_invis proxies obsolete, do not use them.
+//-----------------------------------------------------------------------------
+class CInvisProxy : public CEntityMaterialProxy
+{
+public:
+	virtual bool Init( IMaterial *pMaterial, KeyValues *pKeyValues );
+	virtual void OnBind( C_BaseEntity *pC_BaseEntity );
+	virtual IMaterial *GetMaterial();
+
+private:
+	IMaterialVar *m_pPercentInvisible;
+};
+
+
+bool CInvisProxy::Init( IMaterial *pMaterial, KeyValues *pKeyValues )
+{
+	Assert( pMaterial );
+
+	// Need to get the material var
+	bool bFound;
+	m_pPercentInvisible = pMaterial->FindVar( "$cloakfactor", &bFound );
+
+	return bFound;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+extern ConVar tf_vm_min_invis;
+extern ConVar tf_vm_max_invis;
+
+void CInvisProxy::OnBind( C_BaseEntity *pC_BaseEntity )
+{
+	if ( !m_pPercentInvisible )
+		return;
+
+	C_BaseEntity *pEnt = pC_BaseEntity;
+
+	C_TFPlayer *pPlayer = NULL;
+
+	// Check if we have a move parent and if it's a player
+	C_BaseEntity *pMoveParent = pEnt->GetMoveParent();
+	if ( pMoveParent && pMoveParent->IsPlayer() )
+	{
+		pPlayer = ToTFPlayer( pMoveParent );
+	}
+
+	// If it's not a player then check for viewmodel.
+	if ( !pPlayer )
+	{
+		CBaseEntity *pEntParent = pMoveParent ? pMoveParent : pEnt;
+
+		C_TFViewModel *pVM = dynamic_cast<C_TFViewModel *>( pEntParent );
+		if ( pVM )
+		{
+			pPlayer = ToTFPlayer( pVM->GetOwner() );
+		}
+	}
+
+	if ( !pPlayer )
+	{
+		if ( pEnt->IsPlayer() )
+		{
+			pPlayer = dynamic_cast<C_TFPlayer *>( pEnt );
+		}
+		else
+		{
+			IHasOwner *pOwnerInterface = dynamic_cast<IHasOwner *>( pEnt );
+			if ( pOwnerInterface )
+			{
+				pPlayer = ToTFPlayer( pOwnerInterface->GetOwnerViaInterface() );
+			}
+		}
+	}
+
+	if ( !pPlayer )
+	{
+		C_TFRagdoll *pRagdoll = dynamic_cast<C_TFRagdoll *>( pEnt );
+		if ( !pRagdoll /*|| !pRagdoll->IsCloaked()*/ )
+		{
+			m_pPercentInvisible->SetFloatValue( 0.0f );
+		}
+		return;
+	}
+
+	// If we're the local player, use the old "vm_invis" code. Otherwise, use the "weapon_invis".
+	if ( pPlayer->IsLocalPlayer() )
+	{
+		float flPercentInvisible = pPlayer->GetPercentInvisible();
+		float flWeaponInvis = flPercentInvisible;
+
+		// remap from 0.22 to 0.5
+		// but drop to 0.0 if we're not invis at all
+		flWeaponInvis = ( flPercentInvisible < 0.01 ) ?
+			0.0 :
+			RemapVal( flPercentInvisible, 0.0, 1.0, tf_vm_min_invis.GetFloat(), tf_vm_max_invis.GetFloat() );
+
+		// Exaggerated blink effect on bump.
+		if ( pPlayer->m_Shared.InCond( TF_COND_STEALTHED_BLINK ) )
+		{
+			flWeaponInvis = 0.3f;
+		}
+
+		m_pPercentInvisible->SetFloatValue( flWeaponInvis );
+	}
+	else
+	{
+		m_pPercentInvisible->SetFloatValue( pPlayer->GetEffectiveInvisibilityLevel() );
+	}
+}
+
+IMaterial *CInvisProxy::GetMaterial()
+{
+	if ( !m_pPercentInvisible )
+		return NULL;
+
+	return m_pPercentInvisible->GetOwningMaterial();
+}
+
+//	Generic invis proxy that can handle invis for both weapons & viewmodels.
+//	Makes the vm_invis & weapon_invis proxies obsolete, do not use them.
+EXPOSE_INTERFACE( CInvisProxy, IMaterialProxy, "invis" IMATERIAL_PROXY_INTERFACE_VERSION );
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Used for invulnerability material
@@ -1133,24 +1258,6 @@ public:
 };
 
 EXPOSE_INTERFACE( CProxyUrineLevel, IMaterialProxy, "YellowLevel" IMATERIAL_PROXY_INTERFACE_VERSION );
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-class CProxyInvisStub : public CResultProxy
-{
-public:
-	virtual bool Init( IMaterial *pMaterial, KeyValues *pKeyValues )
-	{
-		return true;
-	}
-
-	virtual void OnBind( void *pC_BaseEntity )
-	{
-	}
-};
-
-EXPOSE_INTERFACE( CProxyInvisStub, IMaterialProxy, "invis" IMATERIAL_PROXY_INTERFACE_VERSION );
 
 //-----------------------------------------------------------------------------
 // Purpose: Used for the weapon glow color when critted
@@ -1836,6 +1943,16 @@ void C_TFPlayer::OnDataChanged( DataUpdateType_t updateType )
 
 		m_bUpdateObjectHudState = false;
 	}
+
+	if ( GetViewModel() )
+	{
+		GetViewModel()->UpdateVisibility();
+	}
+
+	if ( GetViewModel(1) )
+	{
+		GetViewModel(1)->UpdateVisibility();
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -2283,6 +2400,11 @@ void C_TFPlayer::ThirdPersonSwitch( bool bThirdPerson )
 	if ( GetViewModel() )
 	{
 		GetViewModel()->UpdateVisibility();
+	}
+
+	if ( GetViewModel(1) )
+	{
+		GetViewModel(1)->UpdateVisibility();
 	}
 
 	if ( m_hItem )
