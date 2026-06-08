@@ -16,6 +16,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+ConVar tf_ammo_pack_explode_damage( "tf_ammo_pack_explode_damage", "80", FCVAR_GAMEDLL );
+
 //----------------------------------------------
 
 // Network table.
@@ -153,8 +155,8 @@ void CTFAmmoPack::PackTouch( CBaseEntity *pOther )
 
 void CTFAmmoPack::UpdateOnRemove( )
 {
-	if(m_bDisintegrate)
-		Explode(m_pExplosionOwner);
+	if ( m_bDisintegrate && tf_ammo_pack_explode_damage.GetInt() > 0 )
+		Explode( m_pExplosionOwner );
 	BaseClass::UpdateOnRemove();
 }
 
@@ -176,7 +178,6 @@ void CTFAmmoPack::Disintegrate(bool bDisintegrate, CBaseEntity* pOwner)
 		GetBaseAnimating()->Dissolve( "", gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
 }
 
-ConVar tf_ammo_pack_explode_damage( "tf_ammo_pack_explode_damage", "80", FCVAR_GAMEDLL );
 void CTFAmmoPack::Explode( CBaseEntity *pOwner )
 {
 	trace_t		tr;

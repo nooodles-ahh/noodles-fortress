@@ -172,7 +172,6 @@ void CTFGrenadeEmpProjectile::BounceSound( void )
 	EmitSound( "Weapon_Grenade_Emp.Bounce" );
 }
 
-ConVar tf_emp_explode_ammo( "tf_emp_explode_ammo", "1", FCVAR_DEVELOPMENTONLY );
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
@@ -224,22 +223,8 @@ void CTFGrenadeEmpProjectile::Detonate()
 		if( pAmmo )
 		{
 			EMPBeam( pEntity );
-			if (tf_emp_explode_ammo.GetBool())
-			{
-				if(!pAmmo->IsDisintegrating())
-				{
-					pAmmo->Disintegrate(true, GetThrower());
-					pAmmo->GetBaseAnimating()->Dissolve( "", gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
-				}
-			}
-			else
-			{
-				if(!pAmmo->IsDisintegrating())
-				{
-					pAmmo->GetBaseAnimating()->Dissolve( "", gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
-				}
-			}
-			
+			if ( !pAmmo->IsDisintegrating() )
+				pAmmo->Disintegrate( true, GetThrower() );
 		}
 		if ( pObj )
 		{
