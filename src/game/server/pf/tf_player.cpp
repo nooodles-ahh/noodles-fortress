@@ -1030,7 +1030,9 @@ void CTFPlayer::Spawn()
 #ifdef PF2_DLL
 	m_Shared.m_nAirDuckCount = 0;
 	SetPrimedState( PRIME_STATE_NONE );
+#if defined( ENABLE_DETPACK )
 	m_Shared.SetDetpackUsed( false );
+#endif
 	RemoveAllScenesInvolvingActor( this );
 #endif
 
@@ -1117,7 +1119,9 @@ void CTFPlayer::Regenerate( void )
 	}
 	TeamFortress_SetSpeed();
 	m_Shared.m_flNextThrowTime = gpGlobals->curtime + 1.0f;
+#if defined( ENABLE_DETPACK )
 	m_Shared.SetDetpackUsed( false );
+#endif
 #endif
 	m_Shared.SetSpyCloakMeter( 100.0f );
 }
@@ -1738,7 +1742,9 @@ void CTFPlayer::RegenerateRespawn( void )
 #ifdef PF2_DLL
 	m_Shared.m_nAirDuckCount = 0;
 	SetPrimedState( PRIME_STATE_NONE );
+#if defined( ENABLE_DETPACK )
 	m_Shared.SetDetpackUsed( false );
+#endif
 	RemoveAllScenesInvolvingActor( this );
 #endif
 
@@ -3007,12 +3013,14 @@ void CTFPlayer::StartBuildingObjectOfType( int iType, int iMode )
 		{
 			pBuilder->SetSubType( iType );
 			pBuilder->SetObjectMode(iMode);
+#if defined( ENABLE_DETPACK )
 			// Ok so I'm gonna be lazy here and check if we're building a detpack
 			// then use iMode to determine the detonation timer
 			if (iType == OBJ_DETPACK)
 			{
 				pBuilder->SetObjectMode( iMode );
 			}
+#endif
 
 			if( GetActiveTFWeapon() == pBuilder )
 			{

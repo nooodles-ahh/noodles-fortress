@@ -3304,7 +3304,7 @@ int CTFPlayer::CanBuild( int iObjectType, int iObjectMode )
 		return CB_LIMIT_REACHED;
 	}
 
-#ifdef PF2
+#if defined( PF2) && defined( ENABLE_DETPACK )
 	if ( iObjectType == OBJ_DETPACK )
 	{
 		if ( m_Shared.GetDetpackUsed() )

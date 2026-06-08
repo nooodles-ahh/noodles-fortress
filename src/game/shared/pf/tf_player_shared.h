@@ -205,8 +205,10 @@ public:
 	float	GetSmokeBombExpireTime() const	{ return m_flSmokeBombExpire; }
 	void	SetSpyCloakMeter( float val ) { m_flCloakMeter = val; }
 
+#if defined( ENABLE_DETPACK )
 	void	SetDetpackUsed( bool val ) { m_bUsedDetpack = val; }
 	bool	GetDetpackUsed( void ) { return m_bUsedDetpack; }
+#endif
 
 	void	StartGrenadeReneration(int nGrenade);
 	float	GetGrenadeRegenerationTime(int nGrenade) const { return nGrenade == 0 ? (float)m_flGrenade1RegenTime : (float)m_flGrenade2RegenTime; }

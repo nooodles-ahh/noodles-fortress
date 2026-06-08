@@ -1001,11 +1001,12 @@ void CBuildingStatusItem_Sapper::PerformLayout( void )
 
 
 //============================================================================
-
+#if defined( ENABLE_DETPACK )
 CBuildingStatusItem_Detpack::CBuildingStatusItem_Detpack( Panel *parent ) :
 CBuildingStatusItem( parent, "resource/UI/hud_obj_detpack.res", OBJ_DETPACK, OBJECT_MODE_NONE )
 {
 }
+#endif
 
 //============================================================================
 
@@ -1077,6 +1078,7 @@ bool CHudBuildingStatusContainer_Engineer::ShouldDraw( void )
 	return CHudElement::ShouldDraw();
 }
 
+#if defined( ENABLE_DETPACK )
 //============================================================================
 
 
@@ -1113,6 +1115,7 @@ bool CHudBuildingStatusContainer_Demoman::ShouldDraw( void )
 
 	return CHudElement::ShouldDraw();
 }
+#endif
 
 //============================================================================
 
@@ -1203,9 +1206,11 @@ CBuildingStatusItem *CHudBuildingStatusContainer::CreateItemPanel( int iObjectTy
 	case OBJ_ATTACHMENT_SAPPER:
 		pBuildingItem = new CBuildingStatusItem_Sapper( this );
 		break;
+#if defined( ENABLE_DETPACK )
 	case OBJ_DETPACK:
 		pBuildingItem = new CBuildingStatusItem_Detpack( this );
 		break;
+#endif
 	default:
 		pBuildingItem = NULL;
 		break;

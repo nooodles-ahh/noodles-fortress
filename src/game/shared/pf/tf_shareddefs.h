@@ -812,8 +812,10 @@ enum eObjects
 	OBJ_ATTACHMENT_SAPPER,
 
 #ifdef PF2
-	OBJ_DETPACK,
 	OBJ_SRT,
+#if defined( ENABLE_DETPACK )
+	OBJ_DETPACK,
+#endif
 #endif
 	// If you add a new object, you need to add it to the g_ObjectInfos array 
 	// in tf_shareddefs.cpp, and add it's data to the scripts/object.txt

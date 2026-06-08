@@ -17,8 +17,10 @@
 class CHudMenuEngyBuild;
 class CHudMenuEngyDestroy;
 class CHudMenuSpyDisguise;
-class CHudMenuDemoDetpack;
 class CTFFreezePanel;
+#if defined( ENABLE_DETPACK )
+class CHudMenuDemoDetpack;
+#endif
 
 #if defined( _X360 )
 class CTFClientScoreBoardDialog;
@@ -71,7 +73,9 @@ private:
 	CHudMenuEngyBuild *m_pMenuEngyBuild;
 	CHudMenuEngyDestroy *m_pMenuEngyDestroy;
 	CHudMenuSpyDisguise *m_pMenuSpyDisguise;
+#if defined( ENABLE_DETPACK )
 	CHudMenuDemoDetpack *m_pMenuDemoDetpack;
+#endif
 	CTFFreezePanel		*m_pFreezePanel;
 	IGameUI			*m_pGameUI;
 

@@ -41,7 +41,9 @@
 #include "tf_hud_menu_engy_build.h"
 #include "tf_hud_menu_engy_destroy.h"
 #include "tf_hud_menu_spy_disguise.h"
+#if defined( ENABLE_DETPACK )
 #include "tf_hud_menu_demo_detpack.h"
+#endif
 #include "tf_statsummary.h"
 #include "tf_hud_freezepanel.h"
 #include "cam_thirdperson.h"
@@ -139,7 +141,9 @@ ClientModeTFNormal::ClientModeTFNormal()
 	m_pMenuEngyBuild = NULL;
 	m_pMenuEngyDestroy = NULL;
 	m_pMenuSpyDisguise = NULL;
+#if defined( ENABLE_DETPACK )
 	m_pMenuDemoDetpack = NULL;
+#endif
 	m_pGameUI = NULL;
 	m_pFreezePanel = NULL;
 
@@ -176,8 +180,10 @@ void ClientModeTFNormal::Init()
 	m_pMenuSpyDisguise = ( CHudMenuSpyDisguise * )GET_HUDELEMENT( CHudMenuSpyDisguise );
 	Assert( m_pMenuSpyDisguise );
 
+#if defined( ENABLE_DETPACK )
 	m_pMenuDemoDetpack = ( CHudMenuDemoDetpack * ) GET_HUDELEMENT(CHudMenuDemoDetpack);
 	Assert( m_pMenuDemoDetpack );
+#endif
 //#ifdef USE_INVENTORY
 //	m_pMenuWeaponSet = ( CHudMenuWeaponSet * )GET_HUDELEMENT( CHudMenuWeaponSet );
 //	Assert( m_pMenuWeaponSet );
@@ -403,6 +409,7 @@ int	ClientModeTFNormal::HudElementKeyInput( int down, ButtonCode_t keynum, const
 		}
 	}
 
+#if defined( ENABLE_DETPACK )
 	if (m_pMenuDemoDetpack)
 	{
 		if (!m_pMenuDemoDetpack->HudElementKeyInput( down, keynum, pszCurrentBinding ))
@@ -410,6 +417,7 @@ int	ClientModeTFNormal::HudElementKeyInput( int down, ButtonCode_t keynum, const
 			return 0;
 		}
 	}
+#endif
 
 
 //#ifdef USE_INVENTORY

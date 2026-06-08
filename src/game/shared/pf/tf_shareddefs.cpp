@@ -696,8 +696,10 @@ CObjectInfo g_ObjectInfos[OBJ_LAST] =
 	CObjectInfo( "OBJ_SENTRYGUN" ),
 	CObjectInfo( "OBJ_ATTACHMENT_SAPPER" ),
 #ifdef PF2
+	CObjectInfo( "OBJ_SRT" ),
+#if defined( ENABLE_DETPACK )
 	CObjectInfo( "OBJ_DETPACK" ),
-	CObjectInfo( "OBJ_SRT" )
+#endif
 #endif
 };
 

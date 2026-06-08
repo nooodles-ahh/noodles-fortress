@@ -70,8 +70,8 @@ $Project "Server ($GAMENAME)"
 			$File	"$SRCDIR\game\shared\pf\pf_convar_setup.h"
 			$File	"$SRCDIR\game\shared\pf\pf_convar_setup.cpp"
 
-			$File	"pf\tf_obj_detpack.cpp"
-			$File	"pf\tf_obj_detpack.h"
+			$File	"pf\tf_obj_detpack.cpp" [$ENABLE_DETPACK]
+			$File	"pf\tf_obj_detpack.h" [$ENABLE_DETPACK]
 			
 			$File	"pf\pf_logic_multiflag.cpp"
 			$File	"pf\pf_logic_multiflag.h"

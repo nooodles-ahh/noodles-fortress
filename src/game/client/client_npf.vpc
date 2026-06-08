@@ -59,12 +59,12 @@ $Project "Client ($GAMENAME)"
 			$File	"pf\pf_music_system.cpp"
 			$File	"pf\pf_music_system.h"
 
-			$File	"pf\c_obj_detpack.cpp"
-			$File	"pf\c_obj_detpack.h"
+			$File	"pf\c_obj_detpack.cpp" [$ENABLE_DETPACK]
+			$File	"pf\c_obj_detpack.h" [$ENABLE_DETPACK]
 
-			$File	"pf\tf_hud_menu_demo_detpack.cpp"
-			$File	"pf\tf_hud_menu_demo_detpack.h"
-			$File	"pf\tf_hud_detpack_construction.cpp"
+			$File	"pf\tf_hud_menu_demo_detpack.cpp" [$ENABLE_DETPACK]
+			$File	"pf\tf_hud_menu_demo_detpack.h" [$ENABLE_DETPACK]
+			$File	"pf\tf_hud_detpack_construction.cpp" [$ENABLE_DETPACK]
 			
 			$File	"pf\pf_hud_multiflagstatus.cpp"
 			$File	"pf\pf_hud_multiflagstatus.h"
