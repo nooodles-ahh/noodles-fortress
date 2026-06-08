@@ -101,6 +101,9 @@ $Project "Client ($GAMENAME)"
 			$File	"pf\pf_hands.cpp"
 			$File	"pf\pf_hands.h"
 			
+			$File	"pf\pf_preload_system.cpp"
+			$File	"pf\pf_preload_system.h"
+			
 			$File "$SRCDIR\game\shared\pf\util\os_utils.h"
 			$File "$SRCDIR\game\shared\pf\util\os_utils.cpp"
 			{

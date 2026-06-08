@@ -15,6 +15,7 @@
 
 #ifdef CLIENT_DLL
 bool UseHWMorphModels();
+#include "pf/pf_preload_system.h"
 #endif
 
 
@@ -300,6 +301,10 @@ void TFPlayerClassData_t::ParseData( KeyValues *pKeyValuesData )
 
 #endif
 
+#if defined(CLIENT_DLL)
+	CPFPreloadSystem::GetInstance().RegisterMDLPath( m_szModelName );
+	CPFPreloadSystem::GetInstance().RegisterMDLPath( m_szArmModelName );
+#endif
 	// The file has been parsed.
 	m_bParsed = true;
 }

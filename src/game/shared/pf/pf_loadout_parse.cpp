@@ -4,6 +4,9 @@
 #include "pf_loadout.h"
 #include "weapon_parse.h"
 #include "filesystem.h"
+#ifdef CLIENT_DLL
+#include "pf/pf_preload_system.h"
+#endif
 
 PFLoadoutWeaponInfo::PFLoadoutWeaponInfo()
 {
@@ -150,6 +153,11 @@ void PFLoadoutWeaponInfo::Parse(KeyValues* pKeyValuesData, bool disabled)
 			pKey = pKVActivityOverrides->GetNextKey();
 		}
 	}
+
+#if defined(CLIENT_DLL)
+	CPFPreloadSystem::GetInstance().RegisterMDLPath( m_szPlayerModel );
+	CPFPreloadSystem::GetInstance().RegisterMDLPath( m_szInventoryModel );
+#endif
 	
 	//bDisabled = disabled || pKeyValuesData->GetBool("disabled", disabled);
 	m_bDisabled = false;

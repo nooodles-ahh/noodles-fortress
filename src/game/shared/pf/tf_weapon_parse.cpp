@@ -9,6 +9,9 @@
 #include "tf_shareddefs.h"
 #include "tf_playerclass_shared.h"
 #include "pf_cvars.h"
+#ifdef CLIENT_DLL
+#include "pf/pf_preload_system.h"
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -357,6 +360,11 @@ void CTFWeaponInfo::Parse( KeyValues *pKeyValuesData, const char *szWeaponName )
 	//DevMsg("The overall-viewmodel is: %s\n", pKeyValuesData->GetString("viewmodel"));
 	
 	m_bDontDrop = ( pKeyValuesData->GetInt( "DontDrop", 0 ) > 0 );
+
+#if defined(CLIENT_DLL)
+	CPFPreloadSystem::GetInstance().RegisterMDLPath( szViewModel );
+	CPFPreloadSystem::GetInstance().RegisterMDLPath( szWorldModel );
+#endif
 }
 
 const float CTFWeaponInfo::GetWeaponDamage(int iWeapon)
