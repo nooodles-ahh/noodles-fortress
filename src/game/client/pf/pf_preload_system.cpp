@@ -47,11 +47,11 @@ void CPFPreloadSystem::PostInit()
 
 void CPFPreloadSystem::Shutdown()
 {
-	int count = m_stringMap.GetNumStrings();
-	for(int i = 0; i < count; i++)
-	{
-		mdlcache->Release( m_stringMap[i] );
-	}
+	// int count = m_stringMap.GetNumStrings();
+	// for(int i = 0; i < count; i++)
+	// {
+	// 	mdlcache->Release( m_stringMap[i] );
+	// }
 }
 
 void CPFPreloadSystem::PreloadClientPrecache()
@@ -100,6 +100,8 @@ MDLHandle_t CPFPreloadSystem::PreloadMDL( const char *path )
 			VMatrix mat;
 			MatrixSetIdentity( mat );
 			mdl.Draw( mat.As3x4() );
+
+			mdlcache->Release( hMDLFindResult );
 		}
 	}
 	if( hMDLFindResult == MDLHANDLE_INVALID)
