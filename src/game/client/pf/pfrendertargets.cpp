@@ -5,15 +5,14 @@
 //			Mod makers can inherit from this class, and call the Create functions for
 //			only the render textures the want for their mod.
 //=============================================================================//
-
-
 #include "cbase.h"
 #include "tier0/icommandline.h"
 #include "pfrendertargets.h"
 #include "materialsystem/imaterialsystemhardwareconfig.h"
 #include "rendertexture.h"
 
-
+ConVar tf_water_resolution( "tf_water_resolution", "1024", FCVAR_NONE, "Needs to be set at game launch time to override." );
+ConVar tf_monitor_resolution( "tf_monitor_resolution", "1024", FCVAR_NONE, "Needs to be set at game launch time to override." );
 
 ITexture* CPFRenderTargets::CreatePFRefractionTexture( IMaterialSystem* pMaterialSystem )
 {
@@ -27,6 +26,17 @@ ITexture* CPFRenderTargets::CreatePFRefractionTexture( IMaterialSystem* pMateria
 		CREATERENDERTARGETFLAGS_HDR );
 }
 
+ITexture *CPFRenderTargets::CreateViewmodelTexture( IMaterialSystem *pMaterialSystem )
+{
+	return pMaterialSystem->CreateNamedRenderTargetTextureEx2(
+		"_rt_viewmodel",
+		1, 1, RT_SIZE_FULL_FRAME_BUFFER,
+		IMAGE_FORMAT_BGRA8888,
+		MATERIAL_RT_DEPTH_SHARED,
+		TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT | TEXTUREFLAGS_EIGHTBITALPHA,
+		CREATERENDERTARGETFLAGS_HDR );
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Called by the engine in material system init and shutdown.
 //			Clients should override this in their inherited version, but the base
@@ -36,9 +46,10 @@ ITexture* CPFRenderTargets::CreatePFRefractionTexture( IMaterialSystem* pMateria
 //-----------------------------------------------------------------------------
 void CPFRenderTargets::InitClientRenderTargets( IMaterialSystem* pMaterialSystem, IMaterialSystemHardwareConfig* pHardwareConfig )
 {
-	BaseClass::InitClientRenderTargets(pMaterialSystem, pHardwareConfig );
+	BaseClass::InitClientRenderTargets(pMaterialSystem, pHardwareConfig, tf_water_resolution.GetInt(), tf_monitor_resolution.GetInt() );
 
 	m_RefractionPFTexture.Init( CreatePFRefractionTexture( pMaterialSystem ) );
+	m_ViewmodelTexture.Init( CreateViewmodelTexture( pMaterialSystem ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -48,6 +59,7 @@ void CPFRenderTargets::InitClientRenderTargets( IMaterialSystem* pMaterialSystem
 //-----------------------------------------------------------------------------
 void CPFRenderTargets::ShutdownClientRenderTargets()
 {
+	m_ViewmodelTexture.Shutdown();
 	m_RefractionPFTexture.Shutdown();
 
 	BaseClass::ShutdownClientRenderTargets();

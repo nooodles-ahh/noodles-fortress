@@ -40,9 +40,14 @@ public:
 
 protected:
 	
+	// Used for gas hallucination effect
 	CTextureReference		m_RefractionPFTexture;
-
+	// Used for transparent viewmodels
+	CTextureReference		m_ViewmodelTexture;
+	
 	ITexture* CreatePFRefractionTexture( IMaterialSystem* pMaterialSystem );
+	ITexture *CreateViewmodelTexture( IMaterialSystem *pMaterialSystem );
+
 };
 
 extern CPFRenderTargets* pfrendertargets;

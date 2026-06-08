@@ -526,6 +526,9 @@ private:
 #if defined( REPLAY_ENABLED )
 	CReplayScreenshotTaker	*m_pReplayScreenshotTaker;
 #endif
+#if defined( PF2 )
+	CMaterialReference m_transparentVMMaterial;
+#endif
 };
 
 #endif // VIEWRENDER_H

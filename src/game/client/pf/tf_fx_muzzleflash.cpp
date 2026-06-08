@@ -24,6 +24,7 @@
 #include "fx.h"
 #include "toolframework_client.h"
 #include "pf_cvars.h"
+#include "model_types.h"
 
 // Precache our effects
 CLIENTEFFECT_REGISTER_BEGIN( PrecacheEffect_TF_MuzzleFlash )
@@ -374,5 +375,12 @@ RenderGroup_t C_MuzzleFlashModel::GetRenderGroup()
 		return RENDER_GROUP_VIEW_MODEL_TRANSLUCENT;
 	
 	return BaseClass::GetRenderGroup();
+}
+
+int C_MuzzleFlashModel::DrawModel( int flags )
+{
+	if ( ( flags & STUDIO_DRAWTRANSLUCENTSUBMODELS ) )
+		return BaseClass::DrawModel( flags );
+	return 0;
 }
 #endif

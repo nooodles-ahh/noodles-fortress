@@ -7,6 +7,7 @@
 #include "cbase.h"
 #include "c_tf_player.h"
 #include "pf_hands.h"
+#include <model_types.h>
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -64,24 +65,28 @@ extern ConVar cl_flipviewmodels;
 //-----------------------------------------------------------------------------
 int	C_PFVMHands::InternalDrawModel( int flags )
 {
-	C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
-	bool bUseInvulnMaterial = ( pPlayer && pPlayer->m_Shared.InCond( TF_COND_INVULNERABLE ) );
-	if( bUseInvulnMaterial )
+	int ret = 0;
+	if ( !( flags & STUDIO_DRAWTRANSLUCENTSUBMODELS ) )
 	{
-		modelrender->ForcedMaterialOverride( *pPlayer->GetInvulnMaterialRef() );
-	}
+		C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
+		bool bUseInvulnMaterial = ( pPlayer && pPlayer->m_Shared.InCond( TF_COND_INVULNERABLE ) );
+		if( bUseInvulnMaterial )
+		{
+			modelrender->ForcedMaterialOverride( *pPlayer->GetInvulnMaterialRef() );
+		}
 
-	CMatRenderContextPtr pRenderContext( materials );
-	if ( cl_flipviewmodels.GetBool() )
-		pRenderContext->CullMode( MATERIAL_CULLMODE_CW );
+		CMatRenderContextPtr pRenderContext( materials );
+		if ( cl_flipviewmodels.GetBool() )
+			pRenderContext->CullMode( MATERIAL_CULLMODE_CW );
 
-	int ret = BaseClass::InternalDrawModel( flags );
+		ret = BaseClass::InternalDrawModel( flags );
 
-	pRenderContext->CullMode( MATERIAL_CULLMODE_CCW );
+		pRenderContext->CullMode( MATERIAL_CULLMODE_CCW );
 
-	if( bUseInvulnMaterial )
-	{
-		modelrender->ForcedMaterialOverride( NULL );
+		if( bUseInvulnMaterial )
+		{
+			modelrender->ForcedMaterialOverride( NULL );
+		}
 	}
 
 	return ret;

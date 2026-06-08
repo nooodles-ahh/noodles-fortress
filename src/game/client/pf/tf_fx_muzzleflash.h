@@ -49,6 +49,7 @@ public:
 	void	SetIs3rdPersonFlash( bool bEnable );
 #ifdef PF2_CLIENT
 	RenderGroup_t GetRenderGroup();
+	virtual int	DrawModel( int flags );
 #endif
 
 private:
