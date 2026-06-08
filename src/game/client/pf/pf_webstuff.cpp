@@ -43,11 +43,13 @@ bool CPFWebStuff::Init()
 
 void CPFWebStuff::PostInit()
 {
+#if 0
 	if( steamapicontext )
 	{
 		m_pMatchMakingServers = steamapicontext->SteamMatchmakingServers();
 		m_pHTTP = steamapicontext->SteamHTTP();
 	}
+#endif
 
 	// Read the version file
 	if( g_pFullFileSystem->FileExists( "version.txt" ) )
