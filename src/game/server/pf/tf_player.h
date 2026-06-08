@@ -616,13 +616,9 @@ public:
 	bool				SetPowerplayEnabled( bool bOn );
 	bool				PlayerIsDev( void );
 	bool				PlayerHasPowerplay( void );
-	void				PlayerIsLeadDev( void );
 	void				PowerplayThink( void );
-	bool				CheckDeveloper( void );
 	float				m_flPowerPlayTime;
 	bool				m_bIsDeveloper;
-	CNetworkVar( bool, m_bIsLeadDev );
-
 	bool				m_bAllowAmmoOverdraw;
 
 #ifdef PF2_DLL

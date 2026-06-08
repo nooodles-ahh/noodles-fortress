@@ -1292,7 +1292,6 @@ IMPLEMENT_CLIENTCLASS_DT( C_TFPlayer, DT_TFPlayer, CTFPlayer )
 	RecvPropInt( RECVINFO( m_nForceTauntCam ) ),
 	#ifdef PF2_CLIENT
 	RecvPropInt( RECVINFO( m_ArmorValue ) ),
-	RecvPropBool( RECVINFO( m_bIsLeadDev ) ),
 	RecvPropEHandle( RECVINFO( m_hOffHandWeapon ) ),
 	#endif
 END_RECV_TABLE()
@@ -1558,7 +1557,6 @@ void C_TFPlayer::OnPreDataChanged( DataUpdateType_t updateType )
 	m_iOldState = m_Shared.GetCond();
 	m_iOldSpawnCounter = m_iSpawnCounter;
 	m_bOldSaveMeParity = m_bSaveMeParity;
-	//m_bOldIsLeadDev = m_bIsLeadDev;
 	m_nOldWaterLevel = GetWaterLevel();
 
 	m_iOldTeam = GetTeamNumber();
@@ -3580,21 +3578,6 @@ void C_TFPlayer::ClientPlayerRespawn( void )
 		if( pPlayer )
 		{
 			TFPlayerClassData_t *pData = pPlayer->GetPlayerClass()->GetData();
-
-			time_t ltime = time( 0 );
-			const time_t *ptime = &ltime;
-			struct tm *today = localtime( ptime );
-			if( today )
-			{
-				if( today->tm_mon == 3 && today->tm_mday >= 1 )
-				{
-					if(pPlayer->m_bIsLeadDev == true )
-					{
-						DoHallucination();
-					}
-				}
-			}
-
 			if( Q_strcmp( "undefined", pData->m_szClassName ) == 1 )
 				engine->ExecuteClientCmd( VarArgs( "exec %s.cfg", pData->m_szClassName ) );
 		}

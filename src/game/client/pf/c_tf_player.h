@@ -60,9 +60,6 @@ public:
 	~C_TFPlayer();
 
 public:
-	bool			m_bIsLeadDev;
-	bool			m_bOldIsLeadDev;
-
 	class CTFInventory *Inventory;
 	static C_TFPlayer* GetLocalTFPlayer();
 

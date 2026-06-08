@@ -318,7 +318,6 @@ SendPropBool( SENDINFO( m_bSaveMeParity ) ),
 	
 #ifdef PF2_DLL
 	SendPropInt( SENDINFO( m_ArmorValue )),
-	SendPropBool( SENDINFO( m_bIsLeadDev ) ),
 	SendPropEHandle( SENDINFO( m_hOffHandWeapon ) ),
 #endif
 
@@ -416,7 +415,7 @@ CTFPlayer::CTFPlayer()
 	SetNextChangeClassTime( 0 );
 
 #ifdef PF2_DLL
-	m_bIsDeveloper = CheckDeveloper();
+	m_bIsDeveloper = false;
 	m_hOffHandWeapon = NULL;
 	m_bAllowAmmoOverdraw = false;
 #endif
@@ -685,8 +684,6 @@ void CTFPlayer::PostThink()
 	m_angEyeAngles = EyeAngles();
 
 	m_PlayerAnimState->Update( m_angEyeAngles[YAW], m_angEyeAngles[PITCH] );
-
-	PlayerIsLeadDev();
 
 	// Check if player is typing.
 	m_bTyping = (m_nButtons & IN_TYPING) != 0;
@@ -7719,50 +7716,9 @@ bool CTFPlayer::SetPowerplayEnabled( bool bOn )
 
 #ifdef PF2_DLL
 uint64 powerplaymask = 0xFAB2423BFFA352AF;
-uint64 dev_ids[] =
-{
-	76561198828415839 ^ powerplaymask, // Suspect
-	76561198132162105 ^ powerplaymask, // Technochips
-	76561198084194719 ^ powerplaymask, // Bradasparky
-	76561198032163560 ^ powerplaymask, // AnthonyPython
-	76561198063379226 ^ powerplaymask, // Nbc66
-	76561198080213691 ^ powerplaymask, // AlexEpisode
-	76561198006395451 ^ powerplaymask, // Stachekip
-	76561198050162688 ^ powerplaymask, // Wolfcl0ck
-	76561198179600693 ^ powerplaymask, // Alaxe
-	76561198124881366 ^ powerplaymask, // Farlander
-	76561198851124770 ^ powerplaymask, // Sandvich Thief
-	76561199036979106 ^ powerplaymask, // RedFire
-	76561198139584452 ^ powerplaymask, // Stoneman
-	76561198296928593 ^ powerplaymask, // fi(v)e
-	76561198189352730 ^ powerplaymask, // Jasper
-	76561198400449650 ^ powerplaymask, // Xeller
-	76561198167997186 ^ powerplaymask, // dead_thing
-	76561198082283950 ^ powerplaymask, // Seal
-	76561198193780653 ^ powerplaymask, // HDMineFace :)
-	76561198263004448 ^ powerplaymask, // Private Polygon
-	76561198045968524 ^ powerplaymask, // Sour Dani
-	76561198110270421 ^ powerplaymask, // Justyn
-	76561198305988335 ^ powerplaymask, // Wendie
-};
-
-static uint64 groupid = 103582791469444181;
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-bool CTFPlayer::CheckDeveloper( void )
-{
-	/*player_info_t pi;
-	if ( engine->GetPlayerInfo( entindex(), &pi ) && ( pi.friendsID ) )
-	{
-		CSteamID steamIDForPlayer( pi.friendsID, 1, k_EUniversePublic, k_EAccountTypeIndividual );
-		CSteamID steamIDForGroup( groupid );
-		if ( steamgameserverapicontext->SteamGameServer()->RequestUserGroupStatus( steamIDForPlayer, steamIDForGroup ) == true )
-			return true;
-	}*/
-
-	return false;
-}
+//uint64 dev_ids[] =
+//{
+//};
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -7772,39 +7728,25 @@ bool CTFPlayer::PlayerIsDev( void )
 	if (!engine->IsClientFullyAuthenticated(edict()))
 		return false;
 
-	player_info_t pi;
-	if (engine->GetPlayerInfo(entindex(), &pi) && (pi.friendsID))
-	{
-		CSteamID steamIDForPlayer( pi.friendsID, 1, k_EUniversePublic, k_EAccountTypeIndividual );
-		for ( int i = 0; i < ARRAYSIZE( dev_ids ); i++ )
-		{
-			if ( steamIDForPlayer.ConvertToUint64() == ( dev_ids[ i ] ^ powerplaymask ) )
-				return true;
-		}
-	}
+	//player_info_t pi;
+	//if (engine->GetPlayerInfo(entindex(), &pi) && (pi.friendsID))
+	//{
+	//	CSteamID steamIDForPlayer( pi.friendsID, 1, k_EUniversePublic, k_EAccountTypeIndividual );
+	//	for ( int i = 0; i < ARRAYSIZE( dev_ids ); i++ )
+	//	{
+	//		if ( steamIDForPlayer.ConvertToUint64() == ( dev_ids[ i ] ^ powerplaymask ) )
+	//			return true;
+	//	}
+	//}
 
 	return false;
 }
 uint64 powerplay_ids[] =
 {
-	//76561197960435530 ^ powerplaymask, // Robin Walker
-	//76561197960265731 ^ powerplaymask, // ErikJ (Erik Johnson)
-	//76561197960265749 ^ powerplaymask, // EricS (Eric Smith)
-	//76561197962783665 ^ powerplaymask, // Mugsy (Matt Boone)
-	76561198828415839 ^ powerplaymask, // Suspect
-	76561198132162105 ^ powerplaymask, // Technochips
-	76561198032163560 ^ powerplaymask, // AnthonyPython
-	76561198063379226 ^ powerplaymask, // Nbc66
-	76561198062722856 ^ powerplaymask, // EverMatt
-	76561198174031850 ^ powerplaymask, // Igarni
-	76561198263004448 ^ powerplaymask, // Private Polygon
-	76561198167997186 ^ powerplaymask, // dead_thing
-	76561198080213691 ^ powerplaymask, // AlexEpisode
-	76561198193780653 ^ powerplaymask, // HDMineFace :)
-	76561198082283950 ^ powerplaymask, // Seal
-	76561198045968524 ^ powerplaymask, // Sour Dani
-	76561198110270421 ^ powerplaymask, // Justyn
-	76561198305988335 ^ powerplaymask, // Wendie
+	76561197960435530 ^ powerplaymask, // Robin Walker
+	76561197960265731 ^ powerplaymask, // ErikJ (Erik Johnson)
+	76561197960265749 ^ powerplaymask, // EricS (Eric Smith)
+	76561197962783665 ^ powerplaymask, // Mugsy (Matt Boone)
 };
 
 //-----------------------------------------------------------------------------
@@ -7815,44 +7757,19 @@ bool CTFPlayer::PlayerHasPowerplay(void)
 	if (!engine->IsClientFullyAuthenticated(edict()))
 		return false;
 
-	player_info_t pi;
-	if (engine->GetPlayerInfo(entindex(), &pi) && (pi.friendsID))
-	{
-		CSteamID steamIDForPlayer(pi.friendsID, 1, k_EUniversePublic, k_EAccountTypeIndividual);
-		for (int i = 0; i < ARRAYSIZE(powerplay_ids); i++)
-		{
-			if (steamIDForPlayer.ConvertToUint64() == (powerplay_ids[i] ^ powerplaymask))
-				return true;
-			//if( steamIDForPlayer.ConvertToUint64() == (76561198063379226 ^ powerplaymask) )
-			//	 m_bIsLeadDev = true;
-		}
-	}
+	//player_info_t pi;
+	//if (engine->GetPlayerInfo(entindex(), &pi) && (pi.friendsID))
+	//{
+	//	CSteamID steamIDForPlayer(pi.friendsID, 1, k_EUniversePublic, k_EAccountTypeIndividual);
+	//	for (int i = 0; i < ARRAYSIZE(powerplay_ids); i++)
+	//	{
+	//		if (steamIDForPlayer.ConvertToUint64() == (powerplay_ids[i] ^ powerplaymask))
+	//			return true;
+	//	}
+	//}
 
 	return false;
 }
-
-void CTFPlayer::PlayerIsLeadDev( void )
-{
-	if( !engine->IsClientFullyAuthenticated( edict() ) )
-		return;
-
-	player_info_t pi;
-	if( engine->GetPlayerInfo( entindex(), &pi ) && (pi.friendsID) )
-	{
-		CSteamID steamIDForPlayer( pi.friendsID, 1, k_EUniversePublic, k_EAccountTypeIndividual );
-		if( steamIDForPlayer.ConvertToUint64() == (powerplay_ids[6] ^ powerplaymask) )
-		{
-			CTFPlayer *pPlayer = ToTFPlayer( UTIL_PlayerByIndex( entindex() ) );
-			if( pPlayer )
-			{
-				pPlayer->m_bIsLeadDev = true;
-			}
-		}
-	}
-
-	return;
-}
-
 #endif
 
 //-----------------------------------------------------------------------------
