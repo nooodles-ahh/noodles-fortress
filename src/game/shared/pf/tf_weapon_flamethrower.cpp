@@ -214,9 +214,7 @@ void CTFFlameThrower::ItemPostFrame()
 		return;
 
 	int iAmmo = pOwner->GetAmmoCount( m_iPrimaryAmmoType );
-	int iClipAmmo = GetPrimaryAmmoCount();
-
-	if (pOwner->IsAlive() && (pOwner->m_nButtons & IN_ATTACK) && (iAmmo > 0 || iClipAmmo > 0))
+	if (pOwner->IsAlive() && (pOwner->m_nButtons & IN_ATTACK) && (iAmmo > 0))
 	{
 		PrimaryAttack();
 	}
@@ -236,7 +234,7 @@ void CTFFlameThrower::ItemPostFrame()
 		m_bCritFire = false;
 	}
 
-	if (pOwner->IsAlive() && (pOwner->m_nButtons & IN_ATTACK2) && (iClipAmmo > m_pWeaponInfo->GetWeaponData(TF_WEAPON_SECONDARY_MODE).m_iAmmoPerShot ))
+	if (pOwner->IsAlive() && (pOwner->m_nButtons & IN_ATTACK2) && ( iAmmo > m_pWeaponInfo->GetWeaponData(TF_WEAPON_SECONDARY_MODE).m_iAmmoPerShot ))
 	{
 		SecondaryAttack();
 	}
@@ -244,7 +242,7 @@ void CTFFlameThrower::ItemPostFrame()
 	// -----------------------
 	//  No buttons down
 	// -----------------------
-	if ( m_iWeaponState == FT_STATE_IDLE || !((pOwner->m_nButtons & IN_ATTACK) || (pOwner->m_nButtons & IN_ATTACK2) || (CanReload() && pOwner->m_nButtons & IN_RELOAD)))
+	if ( m_iWeaponState == FT_STATE_IDLE || !( ( pOwner->m_nButtons & IN_ATTACK ) || ( pOwner->m_nButtons & IN_ATTACK2 ) ) )
 	{
 		// no fire buttons down or reloading
 		if ( !ReloadOrSwitchWeapons() && ( m_bInReload == false ) )
